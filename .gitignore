@@ -1,0 +1,4 @@
+.dist-scion/
+dist/
+client_session_key.aes
+static/tmp/
