@@ -1,0 +1,3 @@
+[submodule "modules/d3"]
+	path = modules/d3
+	url = git@github.com:maoe/d3.git
