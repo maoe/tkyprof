@@ -59,6 +59,7 @@ executable tkyprof
                     , warp >= 0.4 && < 0.5
                     , web-routes >= 0.23 && < 0.26
                     , yesod-core >= 0.8 && < 0.9
+                    , yesod-form >= 0.1 && < 0.2
                     , yesod-json >= 0.1 && < 0.2
                     , yesod-static >= 0.1 && < 0.2
   ghc-options:        -Wall -threaded
