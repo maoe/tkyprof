@@ -100,6 +100,8 @@ instance Yesod TKYProf where
     return $ Just $ Right (StaticR $ StaticRoute ["tmp", T.pack fn] [], [])
 
 instance YesodBreadcrumbs TKYProf where
-  breadcrumb HomeR = return ("Home", Nothing)
-  breadcrumb ReportsR = return ("Reports", Just HomeR)
+  breadcrumb HomeR            = return ("Home", Nothing)
+  breadcrumb ReportsR         = return ("Reports", Just HomeR)
   breadcrumb (ReportsIdR rid) = return ("Report #" `T.append` T.pack (show rid), Just ReportsR)
+  breadcrumb _                = return ("Not found", Just HomeR)
+
