@@ -1,95 +1,88 @@
-name:              tkyprof
-version:           0.0.0
-license:           BSD3
-license-file:      LICENSE
-author:            Mitsutoshi Aoe
-maintainer:        Mitsutoshi Aoe <maoe@foldr.in>
-synopsis:          A visualizer for GHC Profiling Reports
-category:          Devel
-stability:         Experimental
-cabal-version:     >= 1.6
-build-type:        Simple
-homepage:          http://www.foldr.in/tkyprof
+name:                 tkyprof
+version:              0.0.0
+license:              BSD3
+license-file:         LICENSE
+author:               Mitsutoshi Aoe
+maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
+synopsis:             A visualizer for GHC Profiling Reports
+category:             Devel
+stability:            Experimental
+cabal-version:        >= 1.6
+build-type:           Simple
+homepage:             http://www.foldr.in/tkyprof
 
 flag production
-  description:     Build the production executable.
-  default:         True
+  description:        Build the production executable.
+  default:            True
 
 flag web
-  description:     Build the production executable.
-  default:         False
+  description:        Build the production executable.
+  default:            False
 
 flag devel
-  description:     Build for use with "yesod devel"
-  default:         False
+  description:        Build for use with "yesod devel"
+  default:            False
 
-executable         tkyprof
+executable tkyprof
   if flag(devel)
-    buildable: False
+    buildable:        False
 
   if flag(production)
-    ghc-options:   -Wall -threaded -O2 -fno-warn-unused-do-bind
+    ghc-options:      -Wall -threaded -O2 -fno-warn-unused-do-bind
     if flag(web)
-      cpp-options: -DWEB
+      cpp-options:    -DWEB
     else
-      cpp-options:   -DPRODUCTION
-      build-depends: wai-handler-webkit
+      cpp-options:    -DPRODUCTION
+      build-depends:  wai-handler-webkit
   else
-    ghc-options:   -Wall -threaded
+    ghc-options:      -Wall -threaded
 
-  main-is:         bin/tkyprof.hs
-  hs-source-dirs:  ., config, bin
+  main-is:            bin/tkyprof.hs
+  hs-source-dirs:     ., config, bin
 
-  build-depends:   base >= 4 && < 5
-                 , aeson
-                 , attoparsec
-                 , attoparsec-enumerator
-                 , bytestring
-                 , containers
-                 , directory
-                 , enumerator
-                 , hamlet
-                 , rosezipper
-                 , stm
-                 , template-haskell
-                 , text
-                 , time
-                 , transformers
-                 , transformers
-                 , wai
-                 , wai-extra
-                 , warp
-                 , web-routes
-                 , yesod-core >= 0.8 && < 0.9
-                 , yesod-form
-                 , yesod-json
-                 , yesod-static
-  ghc-options:     -Wall -threaded
+  build-depends:      base >= 4 && < 5
+                    , aeson >= 0.3 && < 0.4
+                    , attoparsec >= 0.9 && < 0.10
+                    , attoparsec-enumerator >= 0.2 && < 0.3
+                    , bytestring >= 0.9 && < 0.10
+                    , containers < 0.5
+                    , directory < 2
+                    , enumerator >= 0.4 && < 0.5
+                    , hamlet >= 0.8 && < 0.10
+                    , rosezipper >= 0.2 && < 0.3
+                    , stm < 3
+                    , template-haskell < 3
+                    , text >= 0.11 && < 0.12
+                    , time >= 1.2 && < 1.3
+                    , transformers >= 0.2 && < 0.3
+                    , wai >= 0.4 && < 0.5
+                    , warp >= 0.4 && < 0.5
+                    , web-routes >= 0.23 && < 0.26
+                    , yesod-core >= 0.8 && < 0.9
+                    , yesod-json >= 0.1 && < 0.2
+                    , yesod-static >= 0.1 && < 0.2
+  ghc-options:        -Wall -threaded
 
 library
   if flag(devel)
-    buildable:     True
+    buildable:        True
   else
-    buildable:     False
-  exposed-modules: Controller
-  hs-source-dirs:  ., config
-  other-modules:   TKYProf
-                   Handler.Home
-                   Handler.Reports
-                   Model
-                   ProfilingReport
-                   Settings
-                   StaticFiles
+    buildable:        False
+  exposed-modules:    Controller
+  hs-source-dirs:     ., config, bin
+  other-modules:      TKYProf
+                      Handler.Home
+                      Handler.Reports
+                      Model
+                      ProfilingReport
+                      Settings
+                      StaticFiles
 
 executable prof2json
-  if flag(devel)
-    buildable:     True
-  else
-    buildable:     False
-
-  hs-source-dirs:  ., bin
-  main-is:         prof2json.hs
-  build-depends:   filepath
-                 , mtl
-                 , blaze-builder
-                 , vector
+  buildable:          False
+  hs-source-dirs:     ., bin
+  main-is:            prof2json.hs
+  build-depends:      filepath
+                    , mtl
+                    , blaze-builder
+                    , vector
