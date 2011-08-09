@@ -1,0 +1,19 @@
+!!!
+<html lang="en">
+  <head>
+    <meta charset="htf-8">
+    <title>#{pageTitle pc}
+    <link href="//fonts.googleapis.com/css?family=Corben:bold&v1" rel="stylesheet" type="text/css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
+    ^{pageHead pc}
+  <body>
+    <ul>
+      $forall bc <- bcs
+        <li>
+          <a href=@{fst bc}>#{snd bc}
+      <li>#{title}
+    $maybe msg <- mmsg
+      <div #message>#{msg}
+    ^{pageBody pc}
+    <footer>
+      Copyright &copy;<time datetime="2011-08-02">2011</time>Mitsutoshi Aoe

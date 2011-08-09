@@ -1,0 +1,15 @@
+h1 {
+  text-align: center;
+}
+
+#uploader {
+  text-align: center;
+  height: 150px;
+  width: 100%;
+
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: 2px dashed #0687FF;
+}

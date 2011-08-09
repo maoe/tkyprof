@@ -1,0 +1,6 @@
+<h1>Devel.TKYProf
+<p>
+    Devel.TKYProf
+<form #uploader action=@{ReportsR} method=post enctype=#{Multipart}>
+    Drop in the profiling reports from your desktop or click to open file select dialog.
+    <input type=file>

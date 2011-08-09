@@ -1,0 +1,87 @@
+name:              tkyprof
+version:           0.0.0
+license:           BSD3
+license-file:      LICENSE
+author:            Mitsutoshi Aoe
+maintainer:        Mitsutoshi Aoe <maoe@foldr.in>
+synopsis:          A visualizer for GHC Profiling Reports
+category:          Devel
+stability:         Experimental
+cabal-version:     >= 1.6
+build-type:        Simple
+homepage:          http://www.foldr.in/tkyprof
+
+flag production
+  description:     Build the production executable.
+  default:         False
+
+flag devel
+  description:     Build for use with "yesod devel"
+  default:         False
+
+library
+  if flag(devel)
+    buildable:     True
+  else
+    buildable:     False
+  exposed-modules: Controller
+  hs-source-dirs:  ., config
+  other-modules:   TKYProf
+                   Handler.Home
+                   Handler.Reports
+                   Model
+                   ProfilingReport
+                   Settings
+                   StaticFiles
+
+executable         tkyprof
+  if flag(devel)
+    buildable: False
+
+  if flag(production)
+    cpp-options:   -DPRODUCTION
+    ghc-options:   -Wall -threaded -O2
+  else
+    ghc-options:   -Wall -threaded
+
+  main-is:         config/tkyprof.hs
+  hs-source-dirs:  ., config
+
+  build-depends:   base >= 4 && < 5
+                 , aeson
+                 , attoparsec
+                 , attoparsec-enumerator
+                 , bytestring
+                 , containers
+                 , directory
+                 , enumerator
+                 , hamlet
+                 , rosezipper
+                 , stm
+                 , template-haskell
+                 , text
+                 , time
+                 , transformers
+                 , transformers
+                 , wai
+                 , wai-extra
+                 , warp
+                 , web-routes
+                 , yesod-core >= 0.8 && < 0.9
+                 , yesod-form
+                 , yesod-json
+                 , yesod-static
+  ghc-options:     -Wall -threaded
+
+executable prof2json
+  if flag(devel)
+    buildable:     True
+  else
+    buildable:     False
+
+  hs-source-dirs:  ., bin
+  main-is:         prof2json.hs
+  build-depends:   filepath
+                 , mtl
+                 , blaze-builder
+                 , vector

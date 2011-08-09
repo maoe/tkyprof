@@ -1,0 +1,4 @@
+<h1>Report ID
+<div #chart>
+  <button #time>Time
+  <button #alloc>Alloc
