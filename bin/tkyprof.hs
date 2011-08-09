@@ -1,12 +1,16 @@
 {-# LANGUAGE CPP #-}
-#if PRODUCTION
 import Controller (withTKYProf)
+#if PRODUCTION
+import Network.Wai.Handler.Webkit (run)
+
+main :: IO ()
+main = withTKYProf $ run "Devel.TKYProf"
+#elif WEB
 import Network.Wai.Handler.Warp (run)
 
 main :: IO ()
 main = withTKYProf $ run 3000
 #else
-import Controller (withTKYProf)
 import System.IO (hPutStrLn, stderr)
 import Network.Wai.Middleware.Debug (debug)
 import Network.Wai.Handler.Warp (run)

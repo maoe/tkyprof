@@ -13,39 +13,32 @@ homepage:          http://www.foldr.in/tkyprof
 
 flag production
   description:     Build the production executable.
+  default:         True
+
+flag web
+  description:     Build the production executable.
   default:         False
 
 flag devel
   description:     Build for use with "yesod devel"
   default:         False
 
-library
-  if flag(devel)
-    buildable:     True
-  else
-    buildable:     False
-  exposed-modules: Controller
-  hs-source-dirs:  ., config
-  other-modules:   TKYProf
-                   Handler.Home
-                   Handler.Reports
-                   Model
-                   ProfilingReport
-                   Settings
-                   StaticFiles
-
 executable         tkyprof
   if flag(devel)
     buildable: False
 
   if flag(production)
-    cpp-options:   -DPRODUCTION
-    ghc-options:   -Wall -threaded -O2
+    ghc-options:   -Wall -threaded -O2 -fno-warn-unused-do-bind
+    if flag(web)
+      cpp-options: -DWEB
+    else
+      cpp-options:   -DPRODUCTION
+      build-depends: wai-handler-webkit
   else
     ghc-options:   -Wall -threaded
 
-  main-is:         config/tkyprof.hs
-  hs-source-dirs:  ., config
+  main-is:         bin/tkyprof.hs
+  hs-source-dirs:  ., config, bin
 
   build-depends:   base >= 4 && < 5
                  , aeson
@@ -72,6 +65,21 @@ executable         tkyprof
                  , yesod-json
                  , yesod-static
   ghc-options:     -Wall -threaded
+
+library
+  if flag(devel)
+    buildable:     True
+  else
+    buildable:     False
+  exposed-modules: Controller
+  hs-source-dirs:  ., config
+  other-modules:   TKYProf
+                   Handler.Home
+                   Handler.Reports
+                   Model
+                   ProfilingReport
+                   Settings
+                   StaticFiles
 
 executable prof2json
   if flag(devel)
