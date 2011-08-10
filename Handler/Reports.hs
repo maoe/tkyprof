@@ -34,8 +34,8 @@ getReportsIdR reportId = do
   let json = T.decodeUtf8 $ A.encode reportCostCentres
   defaultLayout $ do
     setTitle "Devel.TKYProf Report"
-    addScript $ StaticR js_d3_js
-    addScript $ StaticR js_d3_layout_js
+    addScript $ StaticR js_d3_min_js
+    addScript $ StaticR js_d3_layout_min_js
     addWidget $(widgetFile "reports-id")
 
 -- Helper functions
