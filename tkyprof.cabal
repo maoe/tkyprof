@@ -9,7 +9,7 @@ category:             Devel
 stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
-homepage:             http://www.foldr.in/tkyprof
+homepage:             https://github.com/maoe/tkyprof
 
 flag production
   description:        Build the production executable.
