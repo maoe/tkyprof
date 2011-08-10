@@ -65,8 +65,8 @@ newtype TotalAlloc = TotalAlloc
   } deriving Show
 
 data BriefCostCentre = BriefCostCentre
-  { briefCostCentreName   :: ByteString
-  , briefCostCentreModule :: ByteString
+  { briefCostCentreName   :: Text
+  , briefCostCentreModule :: Text
   , briefCostCentreTime   :: Double
   , briefCostCentreAlloc  :: Double
   } deriving Show
@@ -152,10 +152,10 @@ hotCostCentres = header *> spaces *> many1 briefCostCentre
 
 briefCostCentre :: Parser BriefCostCentre
 briefCostCentre =
-  BriefCostCentre <$> symbol <* spaces
-                  <*> symbol <* spaces
-                  <*> double <* spaces
-                  <*> double <* spaces
+  BriefCostCentre <$> symbolText <* spaces
+                  <*> symbolText <* spaces
+                  <*> double     <* spaces
+                  <*> double     <* spaces
 
 costCentres :: Parser (Tree CostCentre)
 costCentres = header *> spaces *> costCentreTree
@@ -214,6 +214,9 @@ parens p = string "(" *> p <* string ")"
 
 symbol :: Parser ByteString
 symbol = takeWhile (not . isSpace)
+
+symbolText :: Parser Text
+symbolText = T.decodeUtf8 <$> symbol
 
 -- Aeson
 instance ToJSON ProfilingReport where
