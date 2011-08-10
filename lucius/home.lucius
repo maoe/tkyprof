@@ -1,15 +1,45 @@
-h1 {
+#container {
+  width: 100%;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-align: center;
+
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  box-pack: center;
+}
+
+.box {
+  width: 50%;
   text-align: center;
 }
 
-#uploader {
-  text-align: center;
-  height: 150px;
-  width: 100%;
+#dropbox {
+  height: 200px;
+  border: 2px dashed #0687FF;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-align: center;
+
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  box-pack: center;
 
   -webkit-border-radius: 10px;
   -khtml-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  border: 2px dashed #0687FF;
+}
+
+#filedialog {
 }

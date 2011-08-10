@@ -1,16 +1,8 @@
 h1, h2 {
-    font-family: 'Corben', serif;
+  text-align: center;
 }
 
-body {
-    font-family: sans-serif;
-}
-
-.chart div {
-    font: 10px sans-serif;
-    background-color: steelblue;
-    text-align: right;
-    padding: 3px;
-    margin: 1px;
-    color: white;
+.breadcrumbs-delimiter {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
 }

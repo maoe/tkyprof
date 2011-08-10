@@ -65,8 +65,8 @@ newtype TotalAlloc = TotalAlloc
   } deriving Show
 
 data BriefCostCentre = BriefCostCentre
-  { briefCostCentreName   :: ByteString
-  , briefCostCentreModule :: ByteString
+  { briefCostCentreName   :: Text
+  , briefCostCentreModule :: Text
   , briefCostCentreTime   :: Double
   , briefCostCentreAlloc  :: Double
   } deriving Show
@@ -152,10 +152,10 @@ hotCostCentres = header *> spaces *> many1 briefCostCentre
 
 briefCostCentre :: Parser BriefCostCentre
 briefCostCentre =
-  BriefCostCentre <$> symbol <* spaces
-                  <*> symbol <* spaces
-                  <*> double <* spaces
-                  <*> double <* spaces
+  BriefCostCentre <$> symbolText <* spaces
+                  <*> symbolText <* spaces
+                  <*> double     <* spaces
+                  <*> double     <* spaces
 
 costCentres :: Parser (Tree CostCentre)
 costCentres = header *> spaces *> costCentreTree
@@ -215,6 +215,9 @@ parens p = string "(" *> p <* string ")"
 symbol :: Parser ByteString
 symbol = takeWhile (not . isSpace)
 
+symbolText :: Parser Text
+symbolText = T.decodeUtf8 <$> symbol
+
 -- Aeson
 instance ToJSON ProfilingReport where
   toJSON ProfilingReport {..} =
@@ -247,17 +250,13 @@ instance ToJSON BriefCostCentre where
 
 instance ToJSON (Tree CostCentre) where
   toJSON (Node cc@(CostCentre {..}) subForest)
-    | null subForest = jsonCC
+    | null subForest = cc'
     | otherwise      = branch
     where
-      jsonCC@(Object m) = toJSON cc
-      branch = object [ "name"      .= costCentreName
-                      , "module"    .= costCentreModule
-                      , "no"        .= costCentreNo
-                      , ("subForest", toJSON' subForest)
-                      ]
-      parent = Object $ M.insert "isParent" (toJSON True) m
-      toJSON' xs = Array $ V.fromList $ parent:map toJSON xs
+      branch = Object $ M.insert "subForest" subForestWithParent unwrappedCC
+      parent = Object $ M.insert "isParent" (toJSON True) unwrappedCC
+      subForestWithParent = Array $ V.fromList $ parent:map toJSON subForest
+      cc'@(Object unwrappedCC) = toJSON cc
 
 instance ToJSON CostCentre where
   toJSON CostCentre {..} =

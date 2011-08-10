@@ -1,8 +1,8 @@
 $(function() {
   var report = #{json};
 
-  var w = 500,
-      h = 500,
+  var w = $("#chart").width(),
+      h = $("#chart").height(),
       r = Math.min(w, h) / 2,
       x = d3.scale.linear().range([0, 2*Math.PI]),
       y = d3.scale.sqrt().range([0, r]),
@@ -27,10 +27,12 @@ $(function() {
   var path = vis.data([report]).selectAll("path")
     .data(partition.nodes)
     .enter().append("svg:path")
-    .attr("class", function(d) { return "cost-centre-" + d.no; })
+    .attr("id", function(d) { return "cc" + d.no + (d.isParent ? "p" : ""); })
+    .attr("class", function(d) { return d.children || d.isParent ? "branch" : "leaf"; })
     .attr("d", arc)
     .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
     .on("click", click)
+    .on("mouseover", mouseover)
     .each(stash);
 
   d3.select("#time").on("click", function() {
@@ -54,9 +56,15 @@ $(function() {
   });
 
   function click(d) {
+    showCostCentre(d);
+    showChildren(d);
     path.transition()
       .duration(500)
       .attrTween("d", arcTweenZoom(d));
+  }
+
+  function mouseover(d) {
+
   }
 
   // Stash the old values for transition.
@@ -86,4 +94,28 @@ $(function() {
         : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
     };
   }
+
+  function showCostCentre(node) {
+    var currentNode = $("#current-node dl");
+    $("#current-node-module", currentNode).text(node.module);
+    $("#current-node-name", currentNode).text(node.name);
+    $("#current-node-number", currentNode).text(node.no);
+    $("#current-node-entries", currentNode).text(node.entries);
+    $("#current-node-ind-time", currentNode).text(node.individualTime);
+    $("#current-node-ind-alloc", currentNode).text(node.individualAlloc);
+    $("#current-node-inh-time", currentNode).text(node.inheritedTime);
+    $("#current-node-inh-alloc", currentNode).text(node.inheritedAlloc);
+  }
+
+  function showChildren(node) {
+    $("#children ol li").remove();
+    var children = $("#children ol");
+    var cs = node.children;
+        n  = cs.length < 10 ? cs.length : 10;
+    for (var i = 0; i < n; i++) {
+      children.append("<li>" + cs[i].name + "</li>");
+    }
+  }
+  showCostCentre(report);
+  showChildren(report);
 });

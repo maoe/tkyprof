@@ -1,4 +1,64 @@
-<h1>Report ID
-<div #chart>
-  <button #time>Time
-  <button #alloc>Alloc
+<h1>The Profiling Report ##{reportId}
+<section #summary>
+  <h1>Summary
+  <div #report-summary .box>
+    <dl>
+      <dt>Timestamp
+      <dd>#{show reportTimestamp}
+      <dt>Command line
+      <dd>#{reportCommandLine}
+      <dt>Total time
+      <dd>#{totalSecs reportTotalTime} seconds
+      <dd>#{totalTicks reportTotalTime} ticks @ #{resolution reportTotalTime} ms
+      <dt>Total allocations
+      <dd>#{totalAllocBytes reportTotalAlloc} bytes
+  <!--
+  <div #hot-cost-centres .box>
+    <table>
+      <caption>Hot cost centres
+      <thead>
+        <tr>
+          <th>Cost centre
+          <th>Module
+          <th>%time
+          <th>%alloc
+      <tbody>
+        $forall bcc <- reportHotCostCentres
+          <tr>
+            <td>#{briefCostCentreName bcc}
+            <td>#{briefCostCentreModule bcc}
+            <td>#{briefCostCentreTime bcc}
+            <td>#{briefCostCentreAlloc bcc}
+  -->
+<section #cost-centres>
+  <header>
+    <h1>Cost centres
+    <button #time>Time report
+    <button #alloc>Alloc report
+  </header>
+  <div #chart-container>
+    <figure #chart>
+    <div #sidebox>
+      <div #current-node>
+        <h3>Current node
+        <dl>
+          <dt>Module
+          <dd #current-node-module>
+          <dt>Name
+          <dd #current-node-name>
+          <dt>Node number
+          <dd #current-node-number>
+          <dt>Entries
+          <dd #current-node-entries>
+          <dt>Individual %time
+          <dd #current-node-ind-time>
+          <dt>Individual %alloc
+          <dd #current-node-ind-alloc>
+          <dt>Inherited %time
+          <dd #current-node-inh-time>
+          <dt>Inherited %alloc
+          <dd #current-node-inh-alloc>
+      <div #children>
+        <h3>Children
+        <ol>
+

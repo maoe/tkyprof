@@ -1,4 +1,4 @@
-{-# LANGUAGE NamedFieldPuns, TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards, NamedFieldPuns, TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
 module Handler.Reports
   ( getReportsR
   , postReportsR
@@ -30,8 +30,8 @@ postReportsR = do
 
 getReportsIdR :: ReportID -> Handler RepHtml
 getReportsIdR reportId = do
-  report <- getProfilingReport reportId
-  let json = T.decodeUtf8 $ A.encode $ reportCostCentres report
+  report@ProfilingReport {..} <- getProfilingReport reportId
+  let json = T.decodeUtf8 $ A.encode reportCostCentres
   defaultLayout $ do
     setTitle "Devel.TKYProf Report"
     addScript $ StaticR js_d3_js
