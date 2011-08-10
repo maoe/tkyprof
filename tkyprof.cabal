@@ -5,6 +5,7 @@ license-file:         LICENSE
 author:               Mitsutoshi Aoe
 maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
 synopsis:             A visualizer for GHC Profiling Reports
+description:          A visualizer for GHC Profiling Reports
 category:             Devel
 stability:            Experimental
 cabal-version:        >= 1.6
