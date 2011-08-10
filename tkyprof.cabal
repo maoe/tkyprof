@@ -1,5 +1,5 @@
 name:                 tkyprof
-version:              0.0.2
+version:              0.0.3
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
@@ -11,6 +11,18 @@ stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
 homepage:             https://github.com/maoe/tkyprof
+bug-reports:          https://github.com/maoe/tkyprof/issues
+data-files:           static/js/d3.layout.min.js
+                      static/js/d3.min.js
+                      static/js/jquery.fileupload.js
+                      static/js/jquery.iframe-transport.js
+                      static/js/jquery.pjax.js
+                      static/js/jquery.ui.widget.js
+                      config/favicon.ico
+                      config/routes
+                      hamlet/*.hamlet
+                      julius/*.julius
+                      lucius/*.lucius
 
 flag production
   description:        Build the production executable.
