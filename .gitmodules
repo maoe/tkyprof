@@ -1,3 +1,9 @@
 [submodule "modules/d3"]
 	path = modules/d3
 	url = git@github.com:maoe/d3.git
+[submodule "modules/jQuery-File-Upload"]
+	path = modules/jQuery-File-Upload
+	url = https://github.com/blueimp/jQuery-File-Upload.git
+[submodule "modules/jquery-ui"]
+	path = modules/jquery-ui
+	url = https://github.com/jquery/jquery-ui.git

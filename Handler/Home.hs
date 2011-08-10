@@ -14,7 +14,7 @@ getHomeR :: Handler RepHtml
 getHomeR = do
   defaultLayout $ do
     setTitle "Devel.TKYProf Home"
-    addScript $ StaticR js_jquery_ui_widgets_min_js
+    addScript $ StaticR js_jquery_ui_widget_js
     addScript $ StaticR js_jquery_iframe_transport_js
     addScript $ StaticR js_jquery_fileupload_js
     addWidget $(widgetFile "home")
