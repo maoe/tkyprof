@@ -1,12 +1,12 @@
 name:                 tkyprof
-version:              0.0.1
+version:              0.0.2
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
 maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
 synopsis:             A visualizer for GHC Profiling Reports
 description:          A visualizer for GHC Profiling Reports
-category:             Devel
+category:             Development
 stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
