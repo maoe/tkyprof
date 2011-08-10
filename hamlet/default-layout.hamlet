@@ -1,17 +1,17 @@
 !!!
 <html lang="en">
   <head>
-    <meta charset="htf-8">
+    <meta charset="utf-8" />
     <title>#{pageTitle pc}
-    <link href="//fonts.googleapis.com/css?family=Corben:bold&v1" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Corben:bold&v1" rel="stylesheet" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
     ^{pageHead pc}
   <body>
-    <ul>
+    <nav #breadcrumbs>
       $forall bc <- bcs
-        <li>
-          <a href=@{fst bc}>#{snd bc}
-      <li>#{title}
+        <a href=@{fst bc}>#{snd bc}
+        >
+      <a>#{title}
     $maybe msg <- mmsg
       <div #message>#{msg}
     ^{pageBody pc}
