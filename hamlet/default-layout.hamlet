@@ -10,7 +10,7 @@
     <nav #breadcrumbs>
       $forall bc <- bcs
         <a href=@{fst bc}>#{snd bc}
-        >
+        <span .breadcrumbs-delimiter>>
       <a>#{title}
     $maybe msg <- mmsg
       <div #message>#{msg}

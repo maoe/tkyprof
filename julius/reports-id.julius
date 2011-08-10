@@ -1,8 +1,8 @@
 $(function() {
   var report = #{json};
 
-  var w = $(window).width() * 0.8,
-      h = $(window).height() * 0.7,
+  var w = $("#chart").width(),
+      h = $("#chart").height(),
       r = Math.min(w, h) / 2,
       x = d3.scale.linear().range([0, 2*Math.PI]),
       y = d3.scale.sqrt().range([0, r]),
@@ -97,7 +97,8 @@ $(function() {
 
   function showCostCentre(node) {
     var currentNode = $("#current-node dl");
-    $("#current-node-name", currentNode).text(node.module + "." + node.name);
+    $("#current-node-module", currentNode).text(node.module);
+    $("#current-node-name", currentNode).text(node.name);
     $("#current-node-number", currentNode).text(node.no);
     $("#current-node-entries", currentNode).text(node.entries);
     $("#current-node-ind-time", currentNode).text(node.individualTime);
