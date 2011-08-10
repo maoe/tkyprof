@@ -1,0 +1,6 @@
+<h1>All reports
+<ul>
+  $forall report <- reports
+    <li>
+      <a href=@{ReportsIdR (fst report)}>#{reportCommandLine (snd report)}
+

@@ -1,0 +1,58 @@
+#report-summary {
+  width: 100%;
+}
+
+/*
+#hot-cost-centres {
+  width: 70%;
+  float: right;
+  border-left: 1px solid;
+}
+*/
+
+#cost-centres {
+}
+
+#time {
+  display: inline;
+}
+
+#alloc {
+  display: inline;
+}
+
+#chart-container {
+  width: 100%;
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+}
+
+#chart {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  min-height: 400px;
+  -webkit-box-ordinal-group: 1;
+  -moz-box-ordinal-group: 1;
+  box-ordinal-group: 1;
+}
+
+#chart path {
+  stroke: #fff;
+  fill-rule: evenodd;
+}
+
+#sidebox {
+  width: 200px;
+  -webkit-box-ordinal-group: 2;
+  -moz-box-ordinal-group: 2;
+  box-ordinal-group: 2;
+}
+
+#current-node {
+}
+
+#children {
+}
+

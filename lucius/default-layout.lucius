@@ -1,0 +1,8 @@
+h1, h2 {
+  text-align: center;
+}
+
+.breadcrumbs-delimiter {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}

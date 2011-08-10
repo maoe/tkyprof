@@ -1,0 +1,12 @@
+$(function() {
+  var uploader = $('#uploader');
+
+  uploader.bind('fileuploaddone', function(e, data) {
+    top.location.href = data.jqXHR.getResponseHeader('Location');
+  });
+
+  uploader.fileupload({
+    url: '/reports',
+    paramName: "reports"
+  });
+});

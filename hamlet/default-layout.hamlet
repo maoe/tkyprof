@@ -1,0 +1,18 @@
+!!!
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>#{pageTitle pc}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
+    ^{pageHead pc}
+  <body>
+    <nav #breadcrumbs>
+      $forall bc <- bcs
+        <a href=@{fst bc}>#{snd bc}
+        <span .breadcrumbs-delimiter>>
+      <a>#{title}
+    $maybe msg <- mmsg
+      <div #message>#{msg}
+    ^{pageBody pc}
+    <footer>
+      Copyright &copy;<time datetime="2011-08-02">2011</time>Mitsutoshi Aoe
