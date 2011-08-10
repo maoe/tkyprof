@@ -90,3 +90,7 @@ executable prof2json
                     , mtl
                     , blaze-builder
                     , vector
+
+source-repository head
+  type:               git
+  location:           git@github.com:maoe/tkyprof.git
