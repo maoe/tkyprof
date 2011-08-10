@@ -9,7 +9,7 @@ category:             Devel
 stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
-homepage:             http://www.foldr.in/tkyprof
+homepage:             https://github.com/maoe/tkyprof
 
 flag production
   description:        Build the production executable.
@@ -90,3 +90,7 @@ executable prof2json
                     , mtl
                     , blaze-builder
                     , vector
+
+source-repository head
+  type:               git
+  location:           git@github.com:maoe/tkyprof.git
