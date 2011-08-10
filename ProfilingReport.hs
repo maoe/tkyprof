@@ -250,17 +250,13 @@ instance ToJSON BriefCostCentre where
 
 instance ToJSON (Tree CostCentre) where
   toJSON (Node cc@(CostCentre {..}) subForest)
-    | null subForest = jsonCC
+    | null subForest = cc'
     | otherwise      = branch
     where
-      jsonCC@(Object m) = toJSON cc
-      branch = object [ "name"      .= costCentreName
-                      , "module"    .= costCentreModule
-                      , "no"        .= costCentreNo
-                      , ("subForest", toJSON' subForest)
-                      ]
-      parent = Object $ M.insert "isParent" (toJSON True) m
-      toJSON' xs = Array $ V.fromList $ parent:map toJSON xs
+      branch = Object $ M.insert "subForest" subForestWithParent unwrappedCC
+      parent = Object $ M.insert "isParent" (toJSON True) unwrappedCC
+      subForestWithParent = Array $ V.fromList $ parent:map toJSON subForest
+      cc'@(Object unwrappedCC) = toJSON cc
 
 instance ToJSON CostCentre where
   toJSON CostCentre {..} =
