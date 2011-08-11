@@ -39,4 +39,3 @@ import Network.Wai.Handler.Webkit (run)
 main :: IO ()
 main = withTKYProf $ run "Devel.TKYProf"
 -}
-
