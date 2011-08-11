@@ -1,5 +1,5 @@
 name:                 tkyprof
-version:              0.0.3
+version:              0.0.4
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
@@ -12,23 +12,21 @@ cabal-version:        >= 1.6
 build-type:           Simple
 homepage:             https://github.com/maoe/tkyprof
 bug-reports:          https://github.com/maoe/tkyprof/issues
+
 data-files:           static/js/d3.layout.min.js
                       static/js/d3.min.js
                       static/js/jquery.fileupload.js
                       static/js/jquery.iframe-transport.js
                       static/js/jquery.pjax.js
                       static/js/jquery.ui.widget.js
-                      config/favicon.ico
-                      config/routes
                       hamlet/*.hamlet
                       julius/*.julius
                       lucius/*.lucius
+                      config/favicon.ico
+
+extra-source-files:   config/routes
 
 flag production
-  description:        Build the production executable.
-  default:            False
-
-flag web
   description:        Build the production executable.
   default:            True
 
@@ -41,25 +39,23 @@ executable tkyprof
     buildable:        False
 
   if flag(production)
-    if flag(web)
-      ghc-options:      -Wall -threaded -O2 -fno-warn-unused-do-bind
-      cpp-options:    -DWEB
-    else
-      cpp-options:    -DPRODUCTION
-      ghc-options:    -Wall -fno-warn-unused-do-bind -pgmc g++ -pgml g++
-      pkgconfig-depends: QtWebKit
-      build-depends:  wai-handler-webkit
-  else
-    ghc-options:      -Wall -threaded
+    ghc-options:      -O2
+    cpp-options:      -DPRODUCTION
+
+    -- ghc-options:    -pgmc g++ -pgml g++
+    -- pkgconfig-depends: QtWebKit
+    -- build-depends:  wai-handler-webkit
 
   main-is:            bin/tkyprof.hs
   hs-source-dirs:     ., config, bin
-
+  other-modules:      Paths_tkyprof
+  ghc-options:        -Wall -threaded
   build-depends:      base >= 4 && < 5
                     , aeson >= 0.3 && < 0.4
                     , attoparsec >= 0.9 && < 0.10
                     , attoparsec-enumerator >= 0.2 && < 0.3
                     , bytestring >= 0.9 && < 0.10
+                    , cmdargs >= 0.7 && < 0.8
                     , containers < 0.5
                     , directory < 2
                     , enumerator >= 0.4 && < 0.5
@@ -78,7 +74,6 @@ executable tkyprof
                     , yesod-form >= 0.1 && < 0.2
                     , yesod-json >= 0.1 && < 0.2
                     , yesod-static >= 0.1 && < 0.2
-  ghc-options:        -Wall -threaded
 
 library
   if flag(devel)
@@ -91,6 +86,7 @@ library
                       Handler.Home
                       Handler.Reports
                       Model
+                      Paths_tkyprof
                       ProfilingReport
                       Settings
                       StaticFiles
