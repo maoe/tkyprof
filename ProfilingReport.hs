@@ -1,4 +1,5 @@
 {-# LANGUAGE FlexibleInstances, RecordWildCards, OverloadedStrings, BangPatterns #-}
+{-# OPTIONS_GHC -fno-warn-unused-do-bind #-}
 module ProfilingReport
   ( -- * Parsers for profiling reports
     profilingReport
