@@ -5,13 +5,12 @@ module Controller
   , withDevelApp
   ) where
 
-import TKYProf
-import Settings
-import Yesod.Helpers.Static
 import Data.ByteString (ByteString)
-import Network.Wai (Application)
 import Data.Dynamic (Dynamic, toDyn)
-
+import Network.Wai (Application)
+import Settings
+import TKYProf
+import Yesod.Helpers.Static
 -- Import all relevant handler modules here.
 import Handler.Home
 import Handler.Reports
