@@ -23,6 +23,7 @@ import Model
 import Settings (hamletFile, luciusFile, juliusFile, widgetFile)
 import StaticFiles
 import System.Directory
+import System.FilePath ((</>))
 import Yesod.Core
 import Yesod.Helpers.Static
 import qualified Data.ByteString.Lazy as L
@@ -92,7 +93,7 @@ instance Yesod TKYProf where
   -- users receiving stale content.
   addStaticContent ext' _ content = do
     let fn = base64md5 content ++ '.' : T.unpack ext'
-    let statictmp = Settings.staticdir ++ "/tmp/"
+    let statictmp = Settings.staticdir </> "tmp/"
     liftIO $ createDirectoryIfMissing True statictmp
     let fn' = statictmp ++ fn
     exists <- liftIO $ doesFileExist fn'
@@ -104,4 +105,3 @@ instance YesodBreadcrumbs TKYProf where
   breadcrumb ReportsR         = return ("Reports", Just HomeR)
   breadcrumb (ReportsIdR rid) = return ("Report #" `T.append` T.pack (show rid), Just ReportsR)
   breadcrumb _                = return ("Not found", Just HomeR)
-
