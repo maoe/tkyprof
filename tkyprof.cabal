@@ -19,9 +19,6 @@ data-files:           static/js/d3.layout.min.js
                       static/js/jquery.iframe-transport.js
                       static/js/jquery.pjax.js
                       static/js/jquery.ui.widget.js
-                      hamlet/*.hamlet
-                      julius/*.julius
-                      lucius/*.lucius
                       config/favicon.ico
 
 extra-source-files:   config/routes

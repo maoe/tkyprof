@@ -12,7 +12,7 @@ main :: IO ()
 main = do
   getDataDir >>= setCurrentDirectory
   TKYProfArg p <- cmdArgs tkyProfArg
-  hPutStrLn stderr $ "TKYProf launched, listening on http://localhost:" ++ show p
+  hPutStrLn stderr $ "TKYProf launched, listening on http://localhost:" ++ show p ++ "/"
   withTKYProf $ run p
 
 data TKYProfArg = TKYProfArg
@@ -39,4 +39,3 @@ import Network.Wai.Handler.Webkit (run)
 main :: IO ()
 main = withTKYProf $ run "Devel.TKYProf"
 -}
-

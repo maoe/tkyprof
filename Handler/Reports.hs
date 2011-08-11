@@ -19,7 +19,7 @@ getReportsR :: Handler RepHtml
 getReportsR = do
   reports <- getAllReports
   defaultLayout $ do
-    setTitle "Devel.TKYProf Report"
+    setTitle "Devel.TKYProf Reports"
     addWidget $(widgetFile "reports")
 
 postReportsR :: Handler ()
