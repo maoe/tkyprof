@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>#{pageTitle pc}
+    <link rel="shortcut icon" type=image/png href=@{FaviconR}>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
     ^{pageHead pc}
   <body>
