@@ -76,12 +76,13 @@
   opacity: 1;
 }
 
+/* sidebox */
 #sidebox {
   background: #303030;
   padding: 1em;
   padding-top: 0.5em;
-  width: 200px;
-  min-height: 400px;
+  width: 18em;
+  min-height: 37em;
   -webkit-box-ordinal-group: 2;
   -moz-box-ordinal-group: 2;
   box-ordinal-group: 2;
@@ -97,13 +98,15 @@
   margin-left: 10em;
 }
 
-#current-node {
-}
-
-#children {
-}
-
 /* summary */
 #report-summary {
   font-size: 0.85em;
+}
+
+#report-summary dt {
+  float: left;
+}
+
+#report-summary dd {
+  margin-left: 10em;
 }
