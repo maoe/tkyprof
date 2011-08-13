@@ -77,6 +77,7 @@ instance Yesod TKYProf where
     mmsg <- getMessage
     (title, bcs) <- breadcrumbs
     pc <- widgetToPageContent $ do
+      addWidget $(Settings.widgetFile "header")                     
       widget
       addLucius $(Settings.luciusFile "default-layout")
     hamletToRepHtml $(Settings.hamletFile "default-layout")

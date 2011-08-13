@@ -1,0 +1,13 @@
+<div #header>
+  <nav #breadcrumbs>
+    <h1>
+      <a href=@{HomeR}>
+        <img #logo src=@{StaticR images_tkyprof_logo_orange_png} alt="Home">
+        TKYPr
+        <span #o>o
+        f
+    $forall bc <- bcs
+      <a href=@{fst bc}>#{snd bc}
+      <span .breadcrumbs-delimiter>>
+    #{title}
+

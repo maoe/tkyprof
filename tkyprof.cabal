@@ -19,7 +19,7 @@ data-files:           static/js/d3.layout.min.js
                       static/js/jquery.iframe-transport.js
                       static/js/jquery.pjax.js
                       static/js/jquery.ui.widget.js
-                      config/favicon.ico
+                      config/favicon.png
 
 extra-source-files:   config/routes
 
@@ -82,6 +82,7 @@ library
   other-modules:      TKYProf
                       Handler.Home
                       Handler.Reports
+                      Handler.Reports.Helpers
                       Model
                       Paths_tkyprof
                       ProfilingReport

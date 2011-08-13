@@ -23,7 +23,7 @@ mkYesodDispatch "TKYProf" resourcesTKYProf
 -- Some default handlers that ship with the Yesod site template. You will
 -- very rarely need to modify this.
 getFaviconR :: Handler ()
-getFaviconR = sendFile "image/x-icon" "config/favicon.ico"
+getFaviconR = sendFile "image/png" "config/favicon.png"
 
 getRobotsR :: Handler RepPlain
 getRobotsR = return $ RepPlain $ toContent ("User-agent: *" :: ByteString)

@@ -1,4 +1,4 @@
-#container {
+#box-wrapper {
   width: 100%;
 
   display: -webkit-box;
@@ -17,11 +17,17 @@
 .box {
   width: 50%;
   text-align: center;
+  box-sizing: border-box;
 }
 
-#dropbox {
+/* dropbox */
+#uploader-dropbox {
   height: 200px;
-  border: 2px dashed #0687FF;
+  border: 2px dashed #fd8d38;
+
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
 
   display: -webkit-box;
   display: -moz-box;
@@ -34,12 +40,13 @@
   -webkit-box-pack: center;
   -moz-box-pack: center;
   box-pack: center;
-
-  -webkit-border-radius: 10px;
-  -khtml-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
 }
 
-#filedialog {
+#uploader-dropbox:hover {
+  border: 2px solid #e6550d;
+}
+
+/* file dialog */
+#uploader-filedialog {
+  /* do nothing */
 }

@@ -1,28 +1,59 @@
-#report-summary {
-  width: 100%;
-}
-
-/*
-#hot-cost-centres {
-  width: 70%;
-  float: right;
-  border-left: 1px solid;
-}
-*/
-
-#cost-centres {
-}
-
-#time {
+/* title and buttons */
+#cost-centres h1 {
   display: inline;
+  margin-right: 15px;
+  font-size: 1.5em;
 }
 
-#alloc {
+#cost-centres .button-group,
+#cost-centres .button-group div {
   display: inline;
+  font-family: 'Amaranth', sans-serif;
+  font-weight: 700;
+  font-size: 1.0em;
 }
 
+#cost-centres .button {
+  border: 1.5px solid transparent;
+  padding-left: 4px;
+  padding-right: 4px;
+  cursor: pointer;
+}
+
+#cost-centres .button:hover {
+  border: 1.5px solid #fd8d38;
+}
+
+#cost-centres .active {
+  border: 1.5px solid #fd8d38;
+  background: #fd8d38;
+  color:      #212121;
+}
+
+#cost-centres .button:first-child {
+  -webkit-border-top-left-radius: 0.5em;
+  -moz-border-top-left-radius: 0.5em;
+  border-top-left-radius: 0.5em;
+  -webkit-border-bottom-left-radius: 0.5em;
+  -moz-border-bottom-left-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+}
+
+#cost-centres .button:last-child {
+  -webkit-border-top-right-radius: 0.5em;
+  -moz-border-top-right-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+  -webkit-border-bottom-right-radius: 0.5em;
+  -moz-border-bottom-right-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+
+/* chart */
 #chart-container {
   width: 100%;
+  font-size: 0.85em;
+
   display: -webkit-box;
   display: -moz-box;
   display: box;
@@ -39,20 +70,43 @@
 }
 
 #chart path {
-  stroke: #fff;
+  stroke: #212121;
+  stroke-width: 0.5;
   fill-rule: evenodd;
+  opacity: 1;
 }
 
+/* sidebox */
 #sidebox {
-  width: 200px;
+  background: #303030;
+  padding: 1em;
+  padding-top: 0.5em;
+  width: 18em;
+  min-height: 37em;
   -webkit-box-ordinal-group: 2;
   -moz-box-ordinal-group: 2;
   box-ordinal-group: 2;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
-#current-node {
+#sidebox dt {
+  float: left;
 }
 
-#children {
+#sidebox dd {
+  margin-left: 10em;
 }
 
+/* summary */
+#report-summary {
+  font-size: 0.85em;
+}
+
+#report-summary dt {
+  float: left;
+}
+
+#report-summary dd {
+  margin-left: 10em;
+}
