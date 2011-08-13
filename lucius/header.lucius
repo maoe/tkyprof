@@ -1,0 +1,32 @@
+#header {
+  height: 38px;
+  width: 100%;
+}
+
+#header h1 {
+  font-family: 'Amaranth', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  margin: 0px;
+  margin-right: 10px;
+  display: inline;
+}
+
+#header h1 #logo {
+  margin-right: 5px;
+}
+
+#header h1 #o {
+  color: #e6550d;
+}
+
+/* breadcrumbs */
+#breadcrumbs {
+  font-family: sans-serif;
+  font-size: 0.75em;
+}
+
+.breadcrumbs-delimiter {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}

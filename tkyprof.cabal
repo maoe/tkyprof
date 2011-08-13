@@ -82,6 +82,7 @@ library
   other-modules:      TKYProf
                       Handler.Home
                       Handler.Reports
+                      Handler.Reports.Helpers
                       Model
                       Paths_tkyprof
                       ProfilingReport

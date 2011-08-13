@@ -2,6 +2,9 @@
 module Handler.Home where
 import TKYProf
 import Yesod.Form (Enctype(Multipart))
+import Data.Maybe (listToMaybe)
+import Handler.Reports.Helpers (getAllReports)
+import ProfilingReport (ProfilingReport(..))
 
 -- This is a handler function for the GET request method on the RootR
 -- resource pattern. All of your resource patterns are defined in
@@ -12,6 +15,7 @@ import Yesod.Form (Enctype(Multipart))
 -- inclined, or create a single monolithic file.
 getHomeR :: Handler RepHtml
 getHomeR = do
+  reports <- getAllReports
   defaultLayout $ do
     setTitle "Devel.TKYProf Home"
     addScript $ StaticR js_jquery_ui_widget_js

@@ -1,8 +1,38 @@
-h1, h2 {
-  text-align: center;
+/* body */
+body {
+  color: #f3f3e3;
+  background: #212121;
+  font-family: sans-serif;
 }
 
-.breadcrumbs-delimiter {
-  margin-left: 0.5em;
-  margin-right: 0.5em;
+/* hx */
+h1, h2, h3, h4 {
+  font-family: 'Amaranth', sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+/* a */
+a {
+  color: #f3f3e3;
+  text-decoration: none;
+}
+
+section a:hover {
+  color: #e6550d;
+  text-decoration: underline;
+}
+
+/* footer */
+footer {
+  text-align: right;
+  font-size: 0.75em;
+  visibility: hidden;
 }
