@@ -14,9 +14,10 @@ $(function() {
     .append("svg:g")
     .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
-  var partition = d3.layout.partition()
-    .value(function(d) { return d.individualTime; })
-    .children(function(d) { return d.subForest; });
+  var partition = d3.layout.partition();
+
+  #{timeProfiling} ? timeToAlloc() : allocToTime();
+  partition.children(function(d) { return d.subForest; });
 
   var arc = d3.svg.arc()
     .startAngle(function(d) { return Math.max(0, Math.min(2*Math.PI, x(d.x))); })
@@ -36,24 +37,30 @@ $(function() {
     .each(stash);
 
   d3.select("#time").on("click", function() {
-    path.data(partition.value(function(d) { return d.individualTime; }))
+    path.data(timeToAlloc())
       .transition()
       .duration(500)
       .attrTween("d", arcTween);
-
-    d3.select("#time").classed("active", true);
-    d3.select("#alloc").classed("active", false);
   });
 
   d3.select("#alloc").on("click", function() {
-    path.data(partition.value(function(d) { return d.individualAlloc; }))
+    path.data(allocToTime())
       .transition()
       .duration(500)
       .attrTween("d", arcTween);
+  });
 
+  function timeToAlloc() {
+    d3.select("#time").classed("active", true);
+    d3.select("#alloc").classed("active", false);
+    return partition.value(function(d) { return d.individualTime; });
+  }
+
+  function allocToTime() {
     d3.select("#time").classed("active", false);
     d3.select("#alloc").classed("active", true);
-  });
+    return partition.value(function(d) { return d.individualAlloc; });
+  }
 
   function click(d) {
     showCostCentre(d);

@@ -34,21 +34,13 @@ postReportsR = do
   postProfilingReport prof
 
 getReportsIdR :: ReportID -> Handler RepHtml
-getReportsIdR reportId = do
-  report@ProfilingReport {..} <- getProfilingReport reportId
-  let json = T.decodeUtf8 $ A.encode reportCostCentres
-  defaultLayout $ do
-    setTitle $ "TKYProf Reports"
-    addScript $ StaticR js_d3_min_js
-    addScript $ StaticR js_d3_layout_min_js
-    addWidget $(widgetFile "reports-id")
-
-getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
-getReportsIdAllocR = const . getReportsIdR
 getReportsIdR reportId = getReportsIdTimeR reportId []
 
 getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
-getReportsIdTimeR = const . getReportsIdR
+getReportsIdTimeR reportId _ = getReportsIdCommon reportId "true"
+
+getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
+getReportsIdAllocR reportId _ = getReportsIdCommon reportId "false"
 
 -- Helper functions
 getPostedReport :: Handler FileInfo
@@ -63,3 +55,14 @@ parseFileContent content =
   case A.parseOnly profilingReport (S.concat $ L.toChunks content) of
     Left err   -> invalidArgs ["Invalid format", toMessage err]
     Right tree -> return tree
+
+getReportsIdCommon :: ReportID -> Text -> Handler RepHtml
+getReportsIdCommon reportId timeProfiling = do
+  report@ProfilingReport {..} <- getProfilingReport reportId
+  let json = T.decodeUtf8 $ A.encode reportCostCentres
+  defaultLayout $ do
+    setTitle $ "TKYProf Reports"
+    addScript $ StaticR js_d3_min_js
+    addScript $ StaticR js_d3_layout_min_js
+    addWidget $(widgetFile "reports-id")
+
