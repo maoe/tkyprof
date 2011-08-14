@@ -1,10 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 module Model where
-import ProfilingReport
-import Data.Map (Map)
-import qualified Data.Map as M
 import Control.Applicative
-import Control.Concurrent.STM
+import Control.Concurrent.STM (STM, TVar, newTVar, readTVar, writeTVar)
+import Data.Map (Map)
+import ProfilingReport (ProfilingReport(..))
+import qualified Data.Map as M
 
 type ReportID = Integer
 

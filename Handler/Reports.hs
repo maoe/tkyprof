@@ -9,6 +9,8 @@ import TKYProf
 import ProfilingReport
 import Control.Applicative
 import Yesod.Request
+import Data.Maybe (listToMaybe)
+import Handler.Reports.Helpers (getAllReports, getProfilingReport, postProfilingReport)
 import qualified Data.Attoparsec as A
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as L
@@ -19,7 +21,7 @@ getReportsR :: Handler RepHtml
 getReportsR = do
   reports <- getAllReports
   defaultLayout $ do
-    setTitle "Devel.TKYProf Report"
+    setTitle "Devel.TKYProf Reports"
     addWidget $(widgetFile "reports")
 
 postReportsR :: Handler ()
@@ -39,34 +41,6 @@ getReportsIdR reportId = do
     addWidget $(widgetFile "reports-id")
 
 -- Helper functions
-runReports :: STM a -> Handler a
-runReports = liftIO . atomically
-
-getReports' :: Handler Reports
-getReports' = getReports <$> getYesod
-
-getAllReports :: Handler [(ReportID, ProfilingReport)]
-getAllReports = do
-  rs <- getReports'
-  runReports $ allReports rs
-
-getAllProfilingReports :: Handler [ProfilingReport]
-getAllProfilingReports = map snd <$> getAllReports
-
-getProfilingReport :: ReportID -> Handler ProfilingReport
-getProfilingReport reportId = do
-  rs <- getReports'
-  mreport <- runReports $ lookupReport reportId rs
-  case mreport of
-    Just r  -> return r
-    Nothing -> notFound
-
-postProfilingReport :: ProfilingReport -> Handler ()
-postProfilingReport prof = do
-  rs <- getReports'
-  reportId <- runReports $ insertReport prof rs
-  sendResponseCreated (ReportsIdR reportId)
-
 getPostedReport :: Handler FileInfo
 getPostedReport = do
   (_, files) <- runRequestBody
