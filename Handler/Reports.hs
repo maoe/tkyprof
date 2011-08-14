@@ -2,19 +2,21 @@
 module Handler.Reports
   ( getReportsR
   , postReportsR
-  , getReportsIdR
+  , getReportsIdTimeR
+  , getReportsIdAllocR
   ) where
 
-import TKYProf
-import ProfilingReport
 import Control.Applicative
-import Yesod.Request
 import Data.Maybe (listToMaybe)
+import Data.Text (Text)
 import Handler.Reports.Helpers (getAllReports, getProfilingReport, postProfilingReport)
+import ProfilingReport
+import TKYProf
+import Yesod.Request
+import qualified Data.Aeson as A (encode)
 import qualified Data.Attoparsec as A
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as L
-import qualified Data.Aeson as A (encode)
 import qualified Data.Text.Lazy.Encoding as T (decodeUtf8)
 
 getReportsR :: Handler RepHtml
@@ -39,6 +41,12 @@ getReportsIdR reportId = do
     addScript $ StaticR js_d3_min_js
     addScript $ StaticR js_d3_layout_min_js
     addWidget $(widgetFile "reports-id")
+
+getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
+getReportsIdAllocR = const . getReportsIdR
+
+getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
+getReportsIdTimeR = const . getReportsIdR
 
 -- Helper functions
 getPostedReport :: Handler FileInfo
