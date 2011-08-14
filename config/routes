@@ -1,5 +1,6 @@
 /                              HomeR           GET
 /reports                       ReportsR        GET POST
+/reports/#Integer              ReportsIdR      GET
 /reports/#Integer/time/*Texts  ReportsIdTimeR  GET
 /reports/#Integer/alloc/*Texts ReportsIdAllocR GET
 /static                        StaticR         Static getStatic

@@ -14,6 +14,6 @@
     <ul>
       $forall report <- reports
         <li>
-          <a href=@{reportsIdR (fst report)}>#{reportCommandLine (snd report)}
+          <a href=@{ReportsIdR (fst report)}>#{reportCommandLine (snd report)}
   $nothing
     <p>There are currently no reports available. First of all, upload your profiling reports please.

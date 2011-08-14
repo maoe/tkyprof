@@ -2,7 +2,6 @@
 module TKYProf
   ( TKYProf (..)
   , TKYProfRoute (..)
-  , reportsIdR
   , resourcesTKYProf
   , Handler
   , Widget
@@ -68,9 +67,6 @@ type Widget = GWidget TKYProf TKYProf
 -- usually require access to the TKYProfRoute datatype. Therefore, we
 -- split these actions into two functions and place them in separate files.
 mkYesodData "TKYProf" $(parseRoutesFile "config/routes")
-
-reportsIdR :: Integer -> TKYProfRoute
-reportsIdR rid = ReportsIdTimeR rid []
 
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.

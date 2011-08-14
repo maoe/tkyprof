@@ -2,6 +2,7 @@
 module Handler.Reports
   ( getReportsR
   , postReportsR
+  , getReportsIdR
   , getReportsIdTimeR
   , getReportsIdAllocR
   ) where
@@ -44,6 +45,7 @@ getReportsIdR reportId = do
 
 getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
 getReportsIdAllocR = const . getReportsIdR
+getReportsIdR reportId = getReportsIdTimeR reportId []
 
 getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
 getReportsIdTimeR = const . getReportsIdR
