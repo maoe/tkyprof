@@ -38,5 +38,5 @@ main = do
 import Network.Wai.Handler.Webkit (run)
 
 main :: IO ()
-main = withTKYProf $ run "Devel.TKYProf"
+main = withTKYProf $ run "TKYProf"
 -}
