@@ -1,5 +1,5 @@
 name:                 tkyprof
-version:              0.0.5
+version:              0.0.5.1
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
@@ -23,6 +23,9 @@ data-files:           static/js/d3.layout.min.js
                       config/favicon.png
 
 extra-source-files:   config/routes
+                      hamlet/*.hamlet
+                      julius/*.julius
+                      lucius/*.lucius
 
 flag production
   description:        Build the production executable.
