@@ -21,7 +21,7 @@ getReportsR :: Handler RepHtml
 getReportsR = do
   reports <- getAllReports
   defaultLayout $ do
-    setTitle "Devel.TKYProf Reports"
+    setTitle "TKYProf Reports"
     addWidget $(widgetFile "reports")
 
 postReportsR :: Handler ()
@@ -35,7 +35,7 @@ getReportsIdR reportId = do
   report@ProfilingReport {..} <- getProfilingReport reportId
   let json = T.decodeUtf8 $ A.encode reportCostCentres
   defaultLayout $ do
-    setTitle "Devel.TKYProf Report"
+    setTitle $ "TKYProf Reports"
     addScript $ StaticR js_d3_min_js
     addScript $ StaticR js_d3_layout_min_js
     addWidget $(widgetFile "reports-id")

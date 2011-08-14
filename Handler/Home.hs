@@ -17,7 +17,7 @@ getHomeR :: Handler RepHtml
 getHomeR = do
   reports <- getAllReports
   defaultLayout $ do
-    setTitle "Devel.TKYProf Home"
+    setTitle "TKYProf"
     addScript $ StaticR js_jquery_ui_widget_js
     addScript $ StaticR js_jquery_iframe_transport_js
     addScript $ StaticR js_jquery_fileupload_js

@@ -3,25 +3,26 @@ import Controller (withTKYProf)
 import System.IO (hPutStrLn, stderr)
 
 #if PRODUCTION
+import Data.Version (showVersion)
 import Network.Wai.Handler.Warp (Port, run)
-import System.Directory (setCurrentDirectory)
-import Paths_tkyprof (getDataDir)
+import Paths_tkyprof (getDataDir, version)
 import System.Console.CmdArgs
+import System.Directory (setCurrentDirectory)
 
 main :: IO ()
 main = do
   getDataDir >>= setCurrentDirectory
   TKYProfArg p <- cmdArgs tkyProfArg
-  hPutStrLn stderr $ "TKYProf launched, listening on http://localhost:" ++ show p ++ "/"
+  hPutStrLn stderr $ "TKYProf " ++ showVersion version ++ " launched, listening on http://localhost:" ++ show p ++ "/"
   withTKYProf $ run p
 
 data TKYProfArg = TKYProfArg
-  { port :: Port
+  { port    :: Port
   } deriving (Show, Data, Typeable)
 
 tkyProfArg :: TKYProfArg
 tkyProfArg = TKYProfArg { port = 3000 &= help "Port number" }
-             &= summary "TKYProf"
+             &= summary ("TKYProf " ++ showVersion version)
 #else
 import Network.Wai.Middleware.Debug (debug)
 import Network.Wai.Handler.Warp (run)
@@ -37,5 +38,5 @@ main = do
 import Network.Wai.Handler.Webkit (run)
 
 main :: IO ()
-main = withTKYProf $ run "Devel.TKYProf"
+main = withTKYProf $ run "TKYProf"
 -}
