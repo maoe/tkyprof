@@ -62,6 +62,7 @@ getReportsIdCommon reportId profilingType = do
   let json = T.decodeUtf8 $ A.encode reportCostCentres
   defaultLayout $ do
     setTitle $ "TKYProf Reports"
+    addScript $ StaticR js_tkyprof_js
     addScript $ StaticR js_d3_min_js
     addScript $ StaticR js_d3_layout_min_js
     addWidget $(widgetFile "reports-id")
