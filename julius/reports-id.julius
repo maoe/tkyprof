@@ -5,22 +5,44 @@ $(function() {
     selector: "#chart",
     type:     "#{profilingType}"
   });
+  var mode = profilingMode({type: "#{profilingType}"});
 
-  var timeButton = $("#time"),
-      allocButton = $("#alloc");
-
-  timeButton.click(function(ev) {
-    timeButton.addClass("active");
-    allocButton.removeClass("active");
+  mode.timeButton.click(function(ev) {
+    mode.time();
     chart.switchView("time");
   });
 
-  allocButton.click(function(ev) {
-    timeButton.removeClass("active");
-    allocButton.addClass("active");
+  mode.allocButton.click(function(ev) {
+    mode.alloc();
     chart.switchView("alloc");
   });
 });
+
+function profilingMode(spec) {
+  var that = {};
+  var type = spec.type || "time";
+  var timeButton = $("#time"),
+      allocButton = $("#alloc");
+
+  type === "time" ? time() : alloc();
+
+  that.timeButton  = timeButton;
+  that.allocButton = allocButton;
+  that.time        = time;
+  that.alloc       = alloc;
+
+  function time() {
+    timeButton.addClass("active");
+    allocButton.removeClass("active");
+  };
+
+  function alloc() {
+    timeButton.removeClass("active");
+    allocButton.addClass("active");
+  };
+
+  return that;
+}
 
 function costCentreChart(spec) {
   // private properties
