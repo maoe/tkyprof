@@ -25,12 +25,20 @@ $(function() {
 
 function parmalink(spec) {
   var that = {};
-  var prefix, type, suffix;
+  var regex = /^(\/reports\/[0-9]+)\/(time|alloc)(.*)$/;
+  var matched = regex.exec(location.pathname);
+  var prefix = matched[1],
+      type   = matched[2],
+      suffix = matched[3];
 
   that.mode = mode;
 
-  function mode(type) {
-    // history.pushState(null, null, prefix + '/' + type + '/' + suffix);
+  function mode(t) {
+    history.pushState(null, null, prefix + '/' + t + suffix);
+  }
+
+  function position(p) {
+    console.log('position');
   }
 
   return that;
@@ -65,6 +73,7 @@ function profilingMode(spec) {
   return that;
 }
 
+// All d3.js related operations are inside
 function costCentreChart(spec) {
   // private properties
   var that = {}; // a new object
