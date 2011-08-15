@@ -200,37 +200,40 @@ function costCentreChart(spec) {
 
 function costCentreContext(spec) {
   var that = {};
-  var currentNode = spec.currentNode,
-      children = spec.children;
+  var children = spec.children;
 
   update(spec);
 
+  that.cursor = spec.currentNode;
   that.update = update;
 
   function update(d) {
-    showCostCentre(d);
-    showChildren(d);
+    that.cursor = d;
+    showCostCentre();
+    showChildren();
   };
 
-  function showCostCentre(node) {
+  function showCostCentre() {
     var currentNode = $("#current-node dl");
-    $("#current-node-module", currentNode).text(node.module);
-    $("#current-node-name", currentNode).text(node.name);
-    $("#current-node-number", currentNode).text(node.no);
-    $("#current-node-entries", currentNode).text(node.entries);
-    $("#current-node-ind-time", currentNode).text(node.individualTime);
-    $("#current-node-ind-alloc", currentNode).text(node.individualAlloc);
-    $("#current-node-inh-time", currentNode).text(node.inheritedTime);
-    $("#current-node-inh-alloc", currentNode).text(node.inheritedAlloc);
+    $("#current-node-module",    currentNode).text(that.cursor.module);
+    $("#current-node-name",      currentNode).text(that.cursor.name);
+    $("#current-node-number",    currentNode).text(that.cursor.no);
+    $("#current-node-entries",   currentNode).text(that.cursor.entries);
+    $("#current-node-ind-time",  currentNode).text(that.cursor.individualTime);
+    $("#current-node-ind-alloc", currentNode).text(that.cursor.individualAlloc);
+    $("#current-node-inh-time",  currentNode).text(that.cursor.inheritedTime);
+    $("#current-node-inh-alloc", currentNode).text(that.cursor.inheritedAlloc);
   }
 
-  function showChildren(node) {
+  function showChildren() {
     $("#children ol li").remove();
     var children = $("#children ol");
-    var cs = node.children;
-    var n = cs.length < 10 ? cs.length : 10;
-    for (var i = 0; i < n; i++) {
-      children.append("<li>" + cs[i].name + "</li>");
+    var cs = that.cursor.children;
+    if (cs) {
+      var n = cs.length < 10 ? cs.length : 10;
+      for (var i = 0; i < n; i++) {
+        children.append("<li>" + cs[i].name + "</li>");
+      }
     }
   }
 
