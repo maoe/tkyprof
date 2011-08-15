@@ -34,7 +34,7 @@ postReportsR = do
   postProfilingReport prof
 
 getReportsIdR :: ReportID -> Handler RepHtml
-getReportsIdR reportId = getReportsIdTimeR reportId []
+getReportsIdR reportId = redirect RedirectSeeOther (ReportsIdTimeR reportId [])
 
 getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
 getReportsIdTimeR reportId _ = getReportsIdCommon reportId "time"
