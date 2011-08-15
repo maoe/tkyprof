@@ -26,7 +26,7 @@ $(function() {
       return; // workaround for popstate on load
     }
 
-    mode.change_by_pathname(location.pathname);
+    mode.changeByPathname(location.pathname);
     chart.mode(mode.type);
   });
 });
@@ -69,7 +69,7 @@ function profilingMode(spec) {
   that.allocButton = allocButton;
   that.type        = type;
   that.change      = change;
-  that.change_by_pathname = function(pathname) {
+  that.changeByPathname = function(pathname) {
     var regex = /^(?:\/reports\/[0-9]+)\/(time|alloc)(?:.*)$/;
     var matched = regex.exec(location.pathname);
     var type = matched[1];
