@@ -25,7 +25,7 @@ $(function() {
     if (!window.history.ready && !state)
       return; // workaround for popstate on load
 
-    mode.change(state);
+    mode.change(state.mode);
     chart.mode(mode.type);
   });
 });
@@ -42,7 +42,7 @@ function parmalink(spec) {
 
   function mode(t) {
     window.history.ready = true;
-    history.pushState(t, null, prefix + '/' + t + suffix);
+    history.pushState({ mode: t }, null, prefix + '/' + t + suffix);
   }
 
   function position(p) {
