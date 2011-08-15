@@ -37,10 +37,10 @@ getReportsIdR :: ReportID -> Handler RepHtml
 getReportsIdR reportId = getReportsIdTimeR reportId []
 
 getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
-getReportsIdTimeR reportId _ = getReportsIdCommon reportId "true"
+getReportsIdTimeR reportId _ = getReportsIdCommon reportId "time"
 
 getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
-getReportsIdAllocR reportId _ = getReportsIdCommon reportId "false"
+getReportsIdAllocR reportId _ = getReportsIdCommon reportId "alloc"
 
 -- Helper functions
 getPostedReport :: Handler FileInfo
@@ -57,7 +57,7 @@ parseFileContent content =
     Right tree -> return tree
 
 getReportsIdCommon :: ReportID -> Text -> Handler RepHtml
-getReportsIdCommon reportId timeProfiling = do
+getReportsIdCommon reportId profilingType = do
   report@ProfilingReport {..} <- getProfilingReport reportId
   let json = T.decodeUtf8 $ A.encode reportCostCentres
   defaultLayout $ do
