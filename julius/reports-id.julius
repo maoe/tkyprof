@@ -200,13 +200,13 @@ function costCentreChart(spec) {
 
   // instance (public) properties
   that.mode = function(t) {
-    if (t) {
+    if (t) { // setter
       type = t;
       path.data(partition.value(fnValue(type)))
         .transition()
         .duration(500)
         .attrTween("d", arcTween);
-    } else {
+    } else { // getter
       return type;
     }
   };
