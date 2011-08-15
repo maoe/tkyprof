@@ -1,22 +1,40 @@
 $(function() {
-  var data = #{json};
+  var data  = #{json};
+  var mode  = profilingMode({type: "#{profilingType}"});
+  var link  = parmalink({type: "{profilingType}"});
   var chart = costCentreChart({
+    type:     "#{profilingType}",
     data:     data,
-    selector: "#chart",
-    type:     "#{profilingType}"
+    selector: "#chart"
   });
-  var mode = profilingMode({type: "#{profilingType}"});
 
   mode.timeButton.click(function(ev) {
     mode.time();
-    chart.switchView("time");
+    console.log(mode.type);
+    link.mode(mode.type);
+    chart.mode(mode.type);
   });
 
   mode.allocButton.click(function(ev) {
     mode.alloc();
-    chart.switchView("alloc");
+    console.log(mode.type);
+    link.mode(mode.type);
+    chart.mode(mode.type);
   });
 });
+
+function parmalink(spec) {
+  var that = {};
+  var prefix, type, suffix;
+
+  that.mode = mode;
+
+  function mode(type) {
+    // history.pushState(null, null, prefix + '/' + type + '/' + suffix);
+  }
+
+  return that;
+}
 
 function profilingMode(spec) {
   var that = {};
@@ -30,13 +48,16 @@ function profilingMode(spec) {
   that.allocButton = allocButton;
   that.time        = time;
   that.alloc       = alloc;
+  that.type        = type;
 
   function time() {
+    that.type = "time";
     timeButton.addClass("active");
     allocButton.removeClass("active");
   };
 
   function alloc() {
+    that.type = "alloc";
     timeButton.removeClass("active");
     allocButton.addClass("active");
   };
@@ -127,7 +148,7 @@ function costCentreChart(spec) {
   }
 
   // instance (public) properties
-  that.switchView = function(type) {
+  that.mode = function(type) {
     path.data(partition.value(fnValue(type)))
       .transition()
       .duration(500)
