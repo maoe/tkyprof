@@ -21,8 +21,9 @@ $(function() {
   });
 
   $(window).bind('popstate', function(event) {
-    if (!window.history.ready && !event.originalEvent.state)
+    if (!window.history.ready && !event.originalEvent.state) {
       return; // workaround for popstate on load
+    }
 
     mode.change_by_pathname(location.pathname);
     chart.mode(mode.type);
@@ -54,8 +55,8 @@ function parmalink(spec) {
 
 function profilingMode(spec) {
   var that = {};
-  var type = spec.type || "time";
-  var timeButton = $("#time"),
+  var type        = spec.type || "time",
+      timeButton  = $("#time"),
       allocButton = $("#alloc");
 
   type === "time" ? time() : alloc();
