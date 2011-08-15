@@ -1,31 +1,30 @@
 $(function() {
   var data  = #{json};
   var mode  = profilingMode({type: "#{profilingType}"});
-  var link  = parmalink({type: "{profilingType}"});
+  var link  = parmalink();
   var chart = costCentreChart({
     type:     "#{profilingType}",
     data:     data,
     selector: "#chart"
   });
 
-  mode.timeButton.click(function(ev) {
+  mode.timeButton.click(function(event) {
     mode.change("time");
     link.mode(mode.type);
     chart.mode(mode.type);
   });
 
-  mode.allocButton.click(function(ev) {
+  mode.allocButton.click(function(event) {
     mode.change("alloc");
     link.mode(mode.type);
     chart.mode(mode.type);
   });
 
-  $(window).bind('popstate', function(ev) {
-    var state = ev.originalEvent.state;
-    if (!window.history.ready && !state)
+  $(window).bind('popstate', function(event) {
+    if (!window.history.ready && !event.originalEvent.state)
       return; // workaround for popstate on load
 
-    mode.change(state.mode);
+    mode.change_by_pathname(location.pathname);
     chart.mode(mode.type);
   });
 });
@@ -42,12 +41,13 @@ function parmalink(spec) {
 
   function mode(t) {
     window.history.ready = true;
-    history.pushState({ mode: t }, null, prefix + '/' + t + suffix);
+    history.pushState(null, null, prefix + '/' + t + suffix);
   }
 
-  function position(p) {
-    console.log('position');
-  }
+  // function position(p) {
+    // window.history.ready = true;
+    // history.pushState({ mode: null, position: null}, null, prefix);
+  // }
 
   return that;
 }
@@ -63,7 +63,21 @@ function profilingMode(spec) {
   that.timeButton  = timeButton;
   that.allocButton = allocButton;
   that.type        = type;
-  that.change      = function(t) { t === "time" ? time() : alloc() };
+  that.change      = change;
+  that.change_by_pathname = function(pathname) {
+    var regex = /^(?:\/reports\/[0-9]+)\/(time|alloc)(?:.*)$/;
+    var matched = regex.exec(location.pathname);
+    var type = matched[1];
+    change(type);
+  };
+
+  function change(t) {
+    if (t === "time") {
+      time();
+    } else {
+      alloc();
+    }
+  };
 
   function time() {
     that.type = "time";
@@ -131,7 +145,7 @@ function costCentreChart(spec) {
   }
 
   function mouseover() {
-    console.log("mouseover");
+    // console.log("mouseover");
   }
 
   function arcTween(a) {
