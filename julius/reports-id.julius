@@ -3,9 +3,10 @@ $(function() {
   var mode  = profilingMode({type: "#{profilingType}"});
   var link  = parmalink();
   var chart = costCentreChart({
-    type:     "#{profilingType}",
-    data:     data,
-    selector: "#chart"
+    type:      "#{profilingType}",
+    data:      data,
+    selector:  "#chart",
+    parmalink: link
   });
 
   mode.timeButton.click(function(event) {
@@ -39,16 +40,19 @@ function parmalink(spec) {
       suffix = matched[3];
 
   that.mode = mode;
+  that.cursor = cursor;
 
   function mode(t) {
     window.history.ready = true;
     history.pushState(null, null, prefix + '/' + t + suffix);
   }
 
-  // function position(p) {
-    // window.history.ready = true;
-    // history.pushState({ mode: null, position: null}, null, prefix);
-  // }
+  function cursor(t, path) {
+    console.log(t);
+    console.log(path);
+    window.history.ready = true;
+    history.pushState(null, null, prefix + "/" + t + "/" + path);
+  }
 
   return that;
 }
@@ -107,7 +111,8 @@ function costCentreChart(spec) {
       x = d3.scale.linear().range([0, 2*Math.PI]),
       y = d3.scale.sqrt().range([0, r]),
       color = spec.color || d3.scale.category20c(),
-      type = spec.type || "time";
+      type = spec.type || "time",
+      parmalink = spec.parmalink;
 
   var vis = d3.select(selector)
     .append("svg:svg")
@@ -143,6 +148,9 @@ function costCentreChart(spec) {
     path.transition()
       .duration(500)
       .attrTween("d", zoomTween(d));
+
+    // history
+    parmalink.cursor(that.mode(), pathFromRoot(context.cursor).join("/"));
   }
 
   function mouseover() {
@@ -179,12 +187,28 @@ function costCentreChart(spec) {
     }
   }
 
+  function pathFromRoot(d) {
+    var cursor = d,
+        path   = [cursor.no];
+
+    while (cursor.parent) {
+      cursor = cursor.parent;
+      path.unshift(cursor.no);
+    }
+    return path;
+  }
+
   // instance (public) properties
-  that.mode = function(type) {
-    path.data(partition.value(fnValue(type)))
-      .transition()
-      .duration(500)
-      .attrTween("d", arcTween);
+  that.mode = function(t) {
+    if (t) {
+      type = t;
+      path.data(partition.value(fnValue(type)))
+        .transition()
+        .duration(500)
+        .attrTween("d", arcTween);
+    } else {
+      return type;
+    }
   };
 
   that.currentNode = function() {
