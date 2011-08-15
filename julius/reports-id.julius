@@ -9,16 +9,23 @@ $(function() {
   });
 
   mode.timeButton.click(function(ev) {
-    mode.time();
-    console.log(mode.type);
+    mode.change("time");
     link.mode(mode.type);
     chart.mode(mode.type);
   });
 
   mode.allocButton.click(function(ev) {
-    mode.alloc();
-    console.log(mode.type);
+    mode.change("alloc");
     link.mode(mode.type);
+    chart.mode(mode.type);
+  });
+
+  $(window).bind('popstate', function(ev) {
+    var state = ev.originalEvent.state;
+    if (!window.history.ready && !state)
+      return; // workaround for popstate on load
+
+    mode.change(state);
     chart.mode(mode.type);
   });
 });
@@ -34,7 +41,8 @@ function parmalink(spec) {
   that.mode = mode;
 
   function mode(t) {
-    history.pushState(null, null, prefix + '/' + t + suffix);
+    window.history.ready = true;
+    history.pushState(t, null, prefix + '/' + t + suffix);
   }
 
   function position(p) {
@@ -54,9 +62,8 @@ function profilingMode(spec) {
 
   that.timeButton  = timeButton;
   that.allocButton = allocButton;
-  that.time        = time;
-  that.alloc       = alloc;
   that.type        = type;
+  that.change      = function(t) { t === "time" ? time() : alloc() };
 
   function time() {
     that.type = "time";
