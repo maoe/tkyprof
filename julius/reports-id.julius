@@ -135,6 +135,7 @@ function costCentreChart(spec) {
     .data(partition.nodes)
     .enter().append("svg:path")
     .attr("d", arc)
+    .attr("id", function(d) { return "cc" + d.no + (d.isParent ? "p" : ""); })
     .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
     .on("click", click)
     .on("mouseover", mouseover)
