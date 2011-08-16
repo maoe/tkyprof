@@ -7,8 +7,6 @@ module Handler.Reports
   , getReportsIdAllocR
   ) where
 
-import Control.Applicative
-import Control.Monad (forM_)
 import Data.Maybe (listToMaybe)
 import Data.Text (Text)
 import Handler.Reports.Helpers (getAllReports, getProfilingReport, postProfilingReport)

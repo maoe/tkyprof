@@ -1,6 +1,6 @@
 {-# LANGUAGE TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
 module Handler.Home where
-import TKYProf
+import TKYProf hiding (reports)
 import Yesod.Form (Enctype(Multipart))
 import Data.Maybe (listToMaybe)
 import Handler.Reports.Helpers (getAllReports)
