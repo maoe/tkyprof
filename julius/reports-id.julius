@@ -1,120 +1,148 @@
 $(function() {
-  var data  = #{json};
-  var mode  = profilingMode({type: "#{profilingType}"});
-  var link  = parmalink();
+  var data = #{json};
+  var parmalink = costCentreParmalink();
   var chart = costCentreChart({
-    type:      "#{profilingType}",
-    data:      data,
-    selector:  "#chart",
-    parmalink: link
+    data: data,
+    parmalink: parmalink
   });
-
-  mode.timeButton.click(function(event) {
-    mode.change("time");
-    link.mode(mode.type);
-    chart.mode(mode.type);
-  });
-
-  mode.allocButton.click(function(event) {
-    mode.change("alloc");
-    link.mode(mode.type);
-    chart.mode(mode.type);
+  var button = profilingModeButton({
+    chart: chart,
+    parmalink: parmalink
   });
 
   $(window).bind('popstate', function(event) {
+    console.log('popstate');
     if (!window.history.ready && !event.originalEvent.state) {
       return; // workaround for popstate on load
     }
-
-    mode.changeByPathname(location.pathname);
-    chart.mode(mode.type);
+    parmalink.popstate(location.pathname);
+    button.mode(parmalink.mode());
+    chart.mode(parmalink.mode());
+    chart.transposeById(parmalink.id());
   });
 });
 
-function parmalink(spec) {
+function costCentreParmalink(spec) {
   var that = {};
-  var regex = /^(\/reports\/[0-9]+)\/(time|alloc)(.*)$/;
-  var matched = regex.exec(location.pathname);
-  var prefix = matched[1],
-      type   = matched[2],
-      suffix = matched[3];
+  var parsed = parse(location.pathname),
+      prefix = parsed[1],
+      mode   = parsed[2],
+      suffix = parsed[3];
 
-  that.mode = mode;
-  that.cursor = cursor;
-
-  function mode(t) {
-    window.history.ready = true;
-    history.pushState(null, null, prefix + '/' + t + suffix);
-  }
-
-  function cursor(t, path) {
-    console.log(t);
-    console.log(path);
-    window.history.ready = true;
-    history.pushState(null, null, prefix + "/" + t + "/" + path);
-  }
-
-  return that;
-}
-
-function profilingMode(spec) {
-  var that = {};
-  var type        = spec.type || "time",
-      timeButton  = $("#time"),
-      allocButton = $("#alloc");
-
-  type === "time" ? time() : alloc();
-
-  that.timeButton  = timeButton;
-  that.allocButton = allocButton;
-  that.type        = type;
-  that.change      = change;
-  that.changeByPathname = function(pathname) {
-    var regex = /^(?:\/reports\/[0-9]+)\/(time|alloc)(?:.*)$/;
-    var matched = regex.exec(location.pathname);
-    var type = matched[1];
-    change(type);
+  function pathname() {
+    return prefix + mode + suffix;
   };
 
-  function change(t) {
-    if (t === "time") {
-      time();
+  function parse(path) {
+    var regex = /^(\/reports\/[0-9]+\/)(time|alloc)(.*)$/;
+    return regex.exec(path);
+  }
+
+  that.mode = function(newMode) {
+    if (!newMode)
+      return mode; // getter
+
+    mode = newMode;
+    window.history.ready = true; // workaround for popstate on load
+    history.pushState(null, null, pathname()); // HTML 5 History API
+    return mode;
+  };
+
+  that.transpose = function(node) {
+    var cursor = node, path = [];
+    for (cursor = node; cursor.parent; cursor = cursor.parent) {
+      path.unshift(cursor.no);
+    }
+    if (path.length > 0) {
+      suffix = "/" + path.join("/");
     } else {
-      alloc();
+      suffix = "";
     }
   };
 
-  function time() {
-    that.type = "time";
-    timeButton.addClass("active");
-    allocButton.removeClass("active");
+  that.popstate = function(url) {
+    var parsed = parse(url);
+    mode   = parsed[2];
+    suffix = parsed[3];
   };
 
-  function alloc() {
-    that.type = "alloc";
-    timeButton.removeClass("active");
-    allocButton.addClass("active");
+  that.id = function() {
+    var regex = /^.*\/([0-9]*)$/;
+    var matched = regex.exec(suffix);
+    return matched ? matched[1] : null;
   };
+
+  that.pathname = pathname;
 
   return that;
 }
 
-// All d3.js related operations are inside
-function costCentreChart(spec) {
-  // private properties
-  var that = {}; // a new object
+function profilingModeButton(spec) {
+  var that = {};
+  var chart = spec.chart, parmalink = spec.parmalink;
+  var timeButton  = $("#time"),
+      allocButton = $("#alloc"),
+      _mode;
 
-  var selector = spec.selector,
-      w = spec.w || $(selector).width(),
-      h = spec.h || $(selector).height(),
+  console.log(timeButton);
+  console.log(allocButton);
+
+  // methods
+  var mode = function(newMode) {
+    if (!newMode)
+      return _mode; // getter
+
+    console.log("button.mode: " + newMode);
+
+    _mode = newMode;
+    // buttons
+    if (_mode == "time") {
+      timeButton.addClass("active");
+      allocButton.removeClass("active");
+    } else {
+      timeButton.removeClass("active");
+      allocButton.addClass("active");
+    }
+    // chart
+    chart.mode(_mode);
+    return _mode;
+  };
+
+  // setup initial states and event handlers
+  mode(parmalink.mode());
+  timeButton.click(function(event) {
+    parmalink.mode("time");
+    mode(parmalink.mode());
+  });
+  allocButton.click(function(event) {
+    parmalink.mode("alloc");
+    mode(parmalink.mode());
+  });
+
+  // public slots
+  that.mode = mode;
+
+  return that;
+}
+
+function costCentreChart(spec) {
+  var that = {};
+
+  var cursor = spec.data,
+      selector = spec.selector,
+      parmalink = spec.parmalink;
+  var context = costCentreContext({cursor: cursor});
+
+  // chart
+  var chart = $("#chart"),
+      w = spec.w || chart.width(),
+      h = spec.h || chart.height(),
       r = Math.min(w, h) / 2,
       x = d3.scale.linear().range([0, 2*Math.PI]),
       y = d3.scale.sqrt().range([0, r]),
-      color = spec.color || d3.scale.category20c(),
-      type = spec.type || "time",
-      parmalink = spec.parmalink;
+      color = spec.color || d3.scale.category20c();
 
-  var vis = d3.select(selector)
+  var vis = d3.select("#chart")
     .append("svg:svg")
     .attr("width", w)
     .attr("height", h)
@@ -123,7 +151,7 @@ function costCentreChart(spec) {
 
   var partition = d3.layout.partition()
     .children(function(d) { return d.subForest; })
-    .value(fnValue(type));
+    .value(value(parmalink.mode()));
 
   var arc = d3.svg.arc()
     .startAngle(function(d) { return Math.max(0, Math.min(2*Math.PI, x(d.x))); })
@@ -131,7 +159,7 @@ function costCentreChart(spec) {
     .innerRadius(function(d) { return Math.max(0, y(d.y)); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-  var path = vis.data([spec.data]).selectAll("path")
+  var path = vis.data([cursor]).selectAll("path")
     .data(partition.nodes)
     .enter().append("svg:path")
     .attr("d", arc)
@@ -141,23 +169,20 @@ function costCentreChart(spec) {
     .on("mouseover", mouseover)
     .each(function(d) { d.x0 = d.x; d.dx0 = d.dx; }); // stash the old values for transition
 
-  var context = costCentreContext(spec.data);
-
   // event handlers
   function click(d) {
-    context.update(d);
-    path.transition()
-      .duration(500)
-      .attrTween("d", zoomTween(d));
-
-    // history
-    parmalink.cursor(that.mode(), pathFromRoot(context.cursor).join("/"));
+    transpose(d);
+    parmalink.transpose(d);
+    console.log(parmalink.pathname());
+    window.history.ready = true; // workaround for popstate on load
+    history.pushState(null, null, parmalink.pathname()); // HTML 5 History API
   }
 
-  function mouseover() {
-    // console.log("mouseover");
+  function mouseover(d) {
+    // XXX
   }
 
+  // tweeners
   function arcTween(a) {
     var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
     return function(t) {
@@ -179,45 +204,47 @@ function costCentreChart(spec) {
     };
   }
 
-  // helpers
-  function fnValue(type) {
-    if (type === "alloc") {
-      return function(d) { return d.individualAlloc; };
-    } else {
+  // helper functions
+  function value(mode) {
+    if (mode === "time")
       return function(d) { return d.individualTime; };
-    }
+    else
+      return function(d) { return d.individualAlloc; };
   }
 
-  function pathFromRoot(d) {
-    var cursor = d,
-        path   = [cursor.no];
-
-    while (cursor.parent) {
-      cursor = cursor.parent;
-      path.unshift(cursor.no);
-    }
-    return path;
+  function nodeFromId(id) {
+    if (!id)
+      return null;
+    console.log(id);
+    var elem = d3.select("#cc" + id);
+    console.log(elem);
+    return elem.node().__data__; // XXX: __data__ is not a public API
   }
 
-  // instance (public) properties
-  that.mode = function(t) {
-    if (t) { // setter
-      type = t;
-      path.data(partition.value(fnValue(type)))
-        .transition()
-        .duration(500)
-        .attrTween("d", arcTween);
-    } else { // getter
-      return type;
-    }
+  var mode = function(mode) {
+    path.data(partition.value(value(mode)))
+      .transition()
+      .duration(500)
+      .attrTween("d", arcTween);
   };
 
-  that.currentNode = function() {
-    return currentNode;
+  var transpose = function(node) {
+    cursor = node;
+    context.transpose(cursor);
+    path.transition()
+      .duration(500)
+      .attrTween("d", zoomTween(cursor));
   };
 
-  that.children = function() {
-    return currentNode.children;
+  // setup initial states
+  mode(parmalink.mode());
+  transpose(nodeFromId(parmalink.id()) || spec.data);
+
+  // public slots
+  that.mode = mode;
+  that.transpose = transpose;
+  that.transposeById = function(id) {
+    transpose(nodeFromId(id) || spec.data);
   };
 
   return that;
@@ -225,42 +252,42 @@ function costCentreChart(spec) {
 
 function costCentreContext(spec) {
   var that = {};
-  var children = spec.children;
+  var cursor = spec.cursor;
 
-  update(spec);
-
-  that.cursor = spec.currentNode;
-  that.update = update;
-
-  function update(d) {
-    that.cursor = d;
-    showCostCentre();
-    showChildren();
+  var showCostCentre = function(node) {
+    var currentNode = $("#current-node dl");
+    $("#current-node-module",    currentNode).text(node.module);
+    $("#current-node-name",      currentNode).text(node.name);
+    $("#current-node-number",    currentNode).text(node.no);
+    $("#current-node-entries",   currentNode).text(node.entries);
+    $("#current-node-ind-time",  currentNode).text(node.individualTime);
+    $("#current-node-ind-alloc", currentNode).text(node.individualAlloc);
+    $("#current-node-inh-time",  currentNode).text(node.inheritedTime);
+    $("#current-node-inh-alloc", currentNode).text(node.inheritedAlloc);
   };
 
-  function showCostCentre() {
-    var currentNode = $("#current-node dl");
-    $("#current-node-module",    currentNode).text(that.cursor.module);
-    $("#current-node-name",      currentNode).text(that.cursor.name);
-    $("#current-node-number",    currentNode).text(that.cursor.no);
-    $("#current-node-entries",   currentNode).text(that.cursor.entries);
-    $("#current-node-ind-time",  currentNode).text(that.cursor.individualTime);
-    $("#current-node-ind-alloc", currentNode).text(that.cursor.individualAlloc);
-    $("#current-node-inh-time",  currentNode).text(that.cursor.inheritedTime);
-    $("#current-node-inh-alloc", currentNode).text(that.cursor.inheritedAlloc);
-  }
-
-  function showChildren() {
+  var showChildren = function(node) {
     $("#children ol li").remove();
     var children = $("#children ol");
-    var cs = that.cursor.children;
+    var cs = node.children;
     if (cs) {
       var n = cs.length < 10 ? cs.length : 10;
       for (var i = 0; i < n; i++) {
         children.append("<li>" + cs[i].name + "</li>");
       }
     }
-  }
+  };
+
+  // setup
+  showCostCentre(cursor);
+  showChildren(cursor);
+
+  // public slots
+  that.transpose = function(node) {
+    cursor = node;
+    showCostCentre(cursor);
+    showChildren(cursor);
+  };
 
   return that;
 }
