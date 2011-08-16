@@ -1,22 +1,157 @@
 $(function() {
-  var report = #{json};
+  var data = #{json};
+  var parmalink = costCentreParmalink();
+  var chart = costCentreChart({
+    data: data,
+    parmalink: parmalink
+  });
+  var button = profilingModeButton({
+    chart: chart,
+    parmalink: parmalink
+  });
 
-  var w = $("#chart").width(),
-      h = $("#chart").height(),
+  $(window).bind('popstate', function(event) {
+    console.log('popstate');
+    if (!window.history.ready && !event.originalEvent.state) {
+      return; // workaround for popstate on load
+    }
+    parmalink.popstate(location.pathname);
+    button.mode(parmalink.mode());
+    chart.mode(parmalink.mode());
+    chart.transposeById(parmalink.id());
+  });
+});
+
+function costCentreParmalink(spec) {
+  var that = {};
+  var parsed = parse(location.pathname),
+      prefix = parsed[1],
+      mode   = parsed[2],
+      suffix = parsed[3];
+
+  function pathname() {
+    return prefix + mode + suffix;
+  };
+
+  function parse(path) {
+    var regex = /^(\/reports\/[0-9]+\/)(time|alloc)(.*)$/;
+    return regex.exec(path);
+  }
+
+  that.mode = function(newMode) {
+    if (!newMode)
+      return mode; // getter
+
+    mode = newMode;
+    window.history.ready = true; // workaround for popstate on load
+    history.pushState(null, null, pathname()); // HTML 5 History API
+    return mode;
+  };
+
+  that.transpose = function(node) {
+    var cursor = node, path = [];
+    for (cursor = node; cursor.parent; cursor = cursor.parent) {
+      path.unshift(cursor.no);
+    }
+    if (path.length > 0) {
+      suffix = "/" + path.join("/");
+    } else {
+      suffix = "";
+    }
+  };
+
+  that.popstate = function(url) {
+    var parsed = parse(url);
+    mode   = parsed[2];
+    suffix = parsed[3];
+  };
+
+  that.id = function() {
+    var regex = /^.*\/([0-9]*)$/;
+    var matched = regex.exec(suffix);
+    return matched ? matched[1] : null;
+  };
+
+  that.pathname = pathname;
+
+  return that;
+}
+
+function profilingModeButton(spec) {
+  var that = {};
+  var chart = spec.chart, parmalink = spec.parmalink;
+  var timeButton  = $("#time"),
+      allocButton = $("#alloc"),
+      _mode;
+
+  console.log(timeButton);
+  console.log(allocButton);
+
+  // methods
+  var mode = function(newMode) {
+    if (!newMode)
+      return _mode; // getter
+
+    console.log("button.mode: " + newMode);
+
+    _mode = newMode;
+    // buttons
+    if (_mode == "time") {
+      timeButton.addClass("active");
+      allocButton.removeClass("active");
+    } else {
+      timeButton.removeClass("active");
+      allocButton.addClass("active");
+    }
+    // chart
+    chart.mode(_mode);
+    return _mode;
+  };
+
+  // setup initial states and event handlers
+  mode(parmalink.mode());
+  timeButton.click(function(event) {
+    parmalink.mode("time");
+    mode(parmalink.mode());
+  });
+  allocButton.click(function(event) {
+    parmalink.mode("alloc");
+    mode(parmalink.mode());
+  });
+
+  // public slots
+  that.mode = mode;
+
+  return that;
+}
+
+function costCentreChart(spec) {
+  var that = {};
+
+  var cursor = spec.data,
+      selector = spec.selector,
+      parmalink = spec.parmalink;
+  var context = costCentreContext({cursor: cursor});
+
+  // chart
+  var chart = $("#chart"),
+      w = spec.w || chart.width(),
+      h = spec.h || chart.height(),
       r = Math.min(w, h) / 2,
       x = d3.scale.linear().range([0, 2*Math.PI]),
       y = d3.scale.sqrt().range([0, r]),
-      color = d3.scale.category20c();
+      color = spec.color || d3.scale.category20c();
 
-  var vis = d3.select("#chart").append("svg:svg")
+  var vis = d3.select("#chart")
+    .append("svg:svg")
     .attr("width", w)
     .attr("height", h)
     .append("svg:g")
     .attr("transform", "translate(" + w/2 + "," + h/2 + ")");
 
   var partition = d3.layout.partition()
-    .value(function(d) { return d.individualTime; })
-    .children(function(d) { return d.subForest; });
+    .children(function(d) { return d.subForest; })
+    .value(value(parmalink.mode()));
 
   var arc = d3.svg.arc()
     .startAngle(function(d) { return Math.max(0, Math.min(2*Math.PI, x(d.x))); })
@@ -24,67 +159,41 @@ $(function() {
     .innerRadius(function(d) { return Math.max(0, y(d.y)); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-  var path = vis.data([report]).selectAll("path")
+  var path = vis.data([cursor]).selectAll("path")
     .data(partition.nodes)
     .enter().append("svg:path")
-    .attr("id", function(d) { return "cc" + d.no + (d.isParent ? "p" : ""); })
-    .attr("class", function(d) { return d.children || d.isParent ? "branch" : "leaf"; })
     .attr("d", arc)
+    .attr("id", function(d) { return "cc" + d.no + (d.isParent ? "p" : ""); })
     .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
     .on("click", click)
     .on("mouseover", mouseover)
-    .each(stash);
+    .each(function(d) { d.x0 = d.x; d.dx0 = d.dx; }); // stash the old values for transition
 
-  d3.select("#time").on("click", function() {
-    path.data(partition.value(function(d) { return d.individualTime; }))
-      .transition()
-      .duration(500)
-      .attrTween("d", arcTween);
-
-    d3.select("#time").classed("active", true);
-    d3.select("#alloc").classed("active", false);
-  });
-
-  d3.select("#alloc").on("click", function() {
-    path.data(partition.value(function(d) { return d.individualAlloc; }))
-      .transition()
-      .duration(500)
-      .attrTween("d", arcTween);
-
-    d3.select("#time").classed("active", false);
-    d3.select("#alloc").classed("active", true);
-  });
-
+  // event handlers
   function click(d) {
-    showCostCentre(d);
-    showChildren(d);
-    path.transition()
-      .duration(500)
-      .attrTween("d", arcTweenZoom(d));
+    transpose(d);
+    parmalink.transpose(d);
+    console.log(parmalink.pathname());
+    window.history.ready = true; // workaround for popstate on load
+    history.pushState(null, null, parmalink.pathname()); // HTML 5 History API
   }
 
   function mouseover(d) {
-
+    // XXX
   }
 
-  // Stash the old values for transition.
-  function stash(d) {
-    d.x0 = d.x;
-    d.dx0 = d.dx;
-  }
-
-  // Interpolate the arcs in data space.
+  // tweeners
   function arcTween(a) {
     var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
     return function(t) {
       var b = i(t);
-      a.x0 = b.x;
+      a.x0  = b.x;
       a.dx0 = b.dx;
       return arc(b);
     };
   }
 
-  function arcTweenZoom(d) {
+  function zoomTween(d) {
     var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
         yd = d3.interpolate(y.domain(), [d.y, 1]),
         yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
@@ -95,27 +204,90 @@ $(function() {
     };
   }
 
-  function showCostCentre(node) {
-    var currentNode = $("#current-node dl");
-    $("#current-node-module", currentNode).text(node.module);
-    $("#current-node-name", currentNode).text(node.name);
-    $("#current-node-number", currentNode).text(node.no);
-    $("#current-node-entries", currentNode).text(node.entries);
-    $("#current-node-ind-time", currentNode).text(node.individualTime);
-    $("#current-node-ind-alloc", currentNode).text(node.individualAlloc);
-    $("#current-node-inh-time", currentNode).text(node.inheritedTime);
-    $("#current-node-inh-alloc", currentNode).text(node.inheritedAlloc);
+  // helper functions
+  function value(mode) {
+    if (mode === "time")
+      return function(d) { return d.individualTime; };
+    else
+      return function(d) { return d.individualAlloc; };
   }
 
-  function showChildren(node) {
+  function nodeFromId(id) {
+    if (!id)
+      return null;
+    console.log(id);
+    var elem = d3.select("#cc" + id);
+    console.log(elem);
+    return elem.node().__data__; // XXX: __data__ is not a public API
+  }
+
+  var mode = function(mode) {
+    path.data(partition.value(value(mode)))
+      .transition()
+      .duration(500)
+      .attrTween("d", arcTween);
+  };
+
+  var transpose = function(node) {
+    cursor = node;
+    context.transpose(cursor);
+    path.transition()
+      .duration(500)
+      .attrTween("d", zoomTween(cursor));
+  };
+
+  // setup initial states
+  mode(parmalink.mode());
+  transpose(nodeFromId(parmalink.id()) || spec.data);
+
+  // public slots
+  that.mode = mode;
+  that.transpose = transpose;
+  that.transposeById = function(id) {
+    transpose(nodeFromId(id) || spec.data);
+  };
+
+  return that;
+}
+
+function costCentreContext(spec) {
+  var that = {};
+  var cursor = spec.cursor;
+
+  var showCostCentre = function(node) {
+    var currentNode = $("#current-node dl");
+    $("#current-node-module",    currentNode).text(node.module);
+    $("#current-node-name",      currentNode).text(node.name);
+    $("#current-node-number",    currentNode).text(node.no);
+    $("#current-node-entries",   currentNode).text(node.entries);
+    $("#current-node-ind-time",  currentNode).text(node.individualTime);
+    $("#current-node-ind-alloc", currentNode).text(node.individualAlloc);
+    $("#current-node-inh-time",  currentNode).text(node.inheritedTime);
+    $("#current-node-inh-alloc", currentNode).text(node.inheritedAlloc);
+  };
+
+  var showChildren = function(node) {
     $("#children ol li").remove();
     var children = $("#children ol");
     var cs = node.children;
-        n  = cs.length < 10 ? cs.length : 10;
-    for (var i = 0; i < n; i++) {
-      children.append("<li>" + cs[i].name + "</li>");
+    if (cs) {
+      var n = cs.length < 10 ? cs.length : 10;
+      for (var i = 0; i < n; i++) {
+        children.append("<li>" + cs[i].name + "</li>");
+      }
     }
-  }
-  showCostCentre(report);
-  showChildren(report);
-});
+  };
+
+  // setup
+  showCostCentre(cursor);
+  showChildren(cursor);
+
+  // public slots
+  that.transpose = function(node) {
+    cursor = node;
+    showCostCentre(cursor);
+    showChildren(cursor);
+  };
+
+  return that;
+}

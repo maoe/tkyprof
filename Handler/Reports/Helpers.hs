@@ -42,6 +42,5 @@ postProfilingReport :: ProfilingReport -> Handler ()
 postProfilingReport prof = do
   rs <- getReports'
   reportId <- runReports $ insertReport prof rs
-  sendResponseCreated (ReportsIdR reportId)
-
+  sendResponseCreated $ ReportsIdR reportId
 
