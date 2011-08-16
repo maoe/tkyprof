@@ -12,8 +12,8 @@ import Control.Monad.STM (STM, atomically)
 import Control.Monad.Trans (liftIO)
 import Model (Reports(..), ReportID, allReports, lookupReport, insertReport)
 import ProfilingReport (ProfilingReport)
-import TKYProf (Handler, TKYProf(getReports), TKYProfRoute(..))
-import Yesod.Core (getYesod, sendResponseCreated)
+import TKYProf (Handler, TKYProf(getReports))
+import Yesod.Core (getYesod)
 import Yesod.Handler (notFound)
 
 runReports :: STM a -> Handler a
@@ -38,10 +38,7 @@ getProfilingReport reportId = do
     Just r  -> return r
     Nothing -> notFound
 
-postProfilingReport :: ProfilingReport -> Handler ()
+postProfilingReport :: ProfilingReport -> Handler ReportID
 postProfilingReport prof = do
   rs <- getReports'
-  reportId <- runReports $ insertReport prof rs
-  sendResponseCreated (ReportsIdR reportId)
-
-
+  runReports $ insertReport prof rs

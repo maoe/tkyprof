@@ -1,17 +1,19 @@
 name:                 tkyprof
-version:              0.0.5.2
+version:              0.0.6
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
 maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
-synopsis:             A visualizer for GHC Profiling Reports
-description:          A visualizer for GHC Profiling Reports
+copyright:            Copyright (C) 2011 Mitsutoshi Aoe
+synopsis:             A web-based visualizer for GHC Profiling Reports
+description:          A web-based visualizer for GHC Profiling Reports
 category:             Development
 stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
 homepage:             https://github.com/maoe/tkyprof
 bug-reports:          https://github.com/maoe/tkyprof/issues
+tested-with:          GHC == 7.0.2
 
 data-files:           static/js/d3.layout.min.js
                       static/js/d3.min.js
@@ -19,6 +21,7 @@ data-files:           static/js/d3.layout.min.js
                       static/js/jquery.iframe-transport.js
                       static/js/jquery.pjax.js
                       static/js/jquery.ui.widget.js
+                      static/js/tkyprof.js
                       static/images/*.png
                       config/favicon.png
 

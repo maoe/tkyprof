@@ -6,7 +6,8 @@ $(function() {
   });
 
   uploader.fileupload({
-    url: '/reports',
-    paramName: "reports"
+    url:               "/reports",
+    paramName:         "reports",
+    singleFileUploads: false
   });
 });
