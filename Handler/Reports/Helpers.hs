@@ -38,9 +38,7 @@ getProfilingReport reportId = do
     Just r  -> return r
     Nothing -> notFound
 
-postProfilingReport :: ProfilingReport -> Handler ()
+postProfilingReport :: ProfilingReport -> Handler ReportID
 postProfilingReport prof = do
   rs <- getReports'
-  reportId <- runReports $ insertReport prof rs
-  sendResponseCreated $ ReportsIdR reportId
-
+  runReports $ insertReport prof rs

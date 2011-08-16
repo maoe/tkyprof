@@ -8,6 +8,7 @@ module Handler.Reports
   ) where
 
 import Control.Applicative
+import Control.Monad (forM_)
 import Data.Maybe (listToMaybe)
 import Data.Text (Text)
 import Handler.Reports.Helpers (getAllReports, getProfilingReport, postProfilingReport)
@@ -29,9 +30,12 @@ getReportsR = do
 
 postReportsR :: Handler ()
 postReportsR = do
-  FileInfo {fileContent} <- getPostedReport
-  prof <- parseFileContent fileContent
-  postProfilingReport prof
+  files <- getPostedReports
+  case files of
+    [fileInfo] -> do reportId <- postFileInfo fileInfo
+                     sendResponseCreated $ ReportsIdR reportId
+    _          -> do mapM_ postFileInfo files
+                     sendResponseCreated ReportsR
 
 getReportsIdR :: ReportID -> Handler RepHtml
 getReportsIdR reportId = redirect RedirectSeeOther (ReportsIdTimeR reportId [])
@@ -43,12 +47,17 @@ getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
 getReportsIdAllocR reportId _ = getReportsIdCommon reportId "alloc"
 
 -- Helper functions
-getPostedReport :: Handler FileInfo
-getPostedReport = do
+getPostedReports :: Handler [FileInfo]
+getPostedReports = do
   (_, files) <- runRequestBody
-  case lookup "reports" files of
-    Nothing   -> invalidArgs ["Missing files"]
-    Just file -> return file
+  case [ file | (header, file) <- files, header == "reports" ] of
+    []    -> invalidArgs ["Missing files"]
+    found -> return found
+
+postFileInfo :: FileInfo -> Handler ReportID
+postFileInfo FileInfo {fileContent} = do
+  prof <- parseFileContent fileContent
+  postProfilingReport prof
 
 parseFileContent :: L.ByteString -> Handler ProfilingReport
 parseFileContent content =
@@ -66,4 +75,3 @@ getReportsIdCommon reportId profilingType = do
     addScript $ StaticR js_d3_min_js
     addScript $ StaticR js_d3_layout_min_js
     addWidget $(widgetFile "reports-id")
-
