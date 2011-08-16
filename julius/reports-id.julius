@@ -10,8 +10,8 @@ $(function() {
     parmalink: parmalink
   });
 
+  chart.transposeById(parmalink.id());
   $(window).bind('popstate', function(event) {
-    console.log('popstate');
     if (!window.history.ready && !event.originalEvent.state) {
       return; // workaround for popstate on load
     }
@@ -84,15 +84,10 @@ function profilingModeButton(spec) {
       allocButton = $("#alloc"),
       _mode;
 
-  console.log(timeButton);
-  console.log(allocButton);
-
   // methods
   var mode = function(newMode) {
     if (!newMode)
       return _mode; // getter
-
-    console.log("button.mode: " + newMode);
 
     _mode = newMode;
     // buttons
@@ -173,7 +168,6 @@ function costCentreChart(spec) {
   function click(d) {
     transpose(d);
     parmalink.transpose(d);
-    console.log(parmalink.pathname());
     window.history.ready = true; // workaround for popstate on load
     history.pushState(null, null, parmalink.pathname()); // HTML 5 History API
   }
@@ -215,9 +209,7 @@ function costCentreChart(spec) {
   function nodeFromId(id) {
     if (!id)
       return null;
-    console.log(id);
     var elem = d3.select("#cc" + id);
-    console.log(elem);
     return elem.node().__data__; // XXX: __data__ is not a public API
   }
 
@@ -233,19 +225,21 @@ function costCentreChart(spec) {
     context.transpose(cursor);
     path.transition()
       .duration(500)
-      .attrTween("d", zoomTween(cursor));
+      .attrTween("d", zoomTween(node));
   };
 
-  // setup initial states
-  mode(parmalink.mode());
-  transpose(nodeFromId(parmalink.id()) || spec.data);
+  var transposeById = function(id) {
+    transpose(nodeFromId(id) || spec.data);
+  };
 
   // public slots
   that.mode = mode;
   that.transpose = transpose;
-  that.transposeById = function(id) {
-    transpose(nodeFromId(id) || spec.data);
-  };
+  that.transposeById = transposeById;
+
+  // setup initial states
+  mode(parmalink.mode());
+  transposeById(parmalink.id());
 
   return that;
 }
