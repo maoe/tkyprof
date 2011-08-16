@@ -1,16 +1,10 @@
 /* title and buttons */
-#cost-centres h1 {
-  display: inline;
-  margin-right: 15px;
-  font-size: 1.5em;
+#cost-centres > header {
+  margin: 1em;
 }
-
-#cost-centres .button-group,
-#cost-centres .button-group div {
+#cost-centres h2 {
   display: inline;
-  font-family: 'Amaranth', sans-serif;
-  font-weight: 700;
-  font-size: 1.0em;
+  font-size: 1.5em;
 }
 
 #cost-centres .button {

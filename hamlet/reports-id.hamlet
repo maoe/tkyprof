@@ -1,10 +1,8 @@
-<h1>Time and Allocation Profiling Report ##{reportId}
 <section #cost-centres>
   <header>
-    <h1>Cost centres:
     <div .button-group>
-      <div #time .button .active>Time profiling
-      <div #alloc .button>Alloc profiling
+      <h2 #time .button>Time profiling
+      <h2 #alloc .button>Alloc profiling
   <div #chart-container>
     <figure #chart>
     <div #sidebox>
@@ -31,7 +29,7 @@
         <h2>Children
         <ol>
 <section #summary>
-  <h1>Summary
+  <h2>Summary
   <div #report-summary .box>
     <dl>
       <dt>Timestamp
