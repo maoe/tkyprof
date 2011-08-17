@@ -1,5 +1,5 @@
 name:                 tkyprof
-version:              0.0.6.1
+version:              0.0.6.2
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
@@ -24,6 +24,8 @@ data-files:           static/js/d3.layout.min.js
                       static/js/tkyprof.js
                       static/images/*.png
                       config/favicon.png
+                      LICENSE
+                      README.markdown
 
 extra-source-files:   config/routes
                       hamlet/*.hamlet
