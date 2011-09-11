@@ -14,4 +14,4 @@ main = hakyllWith config $ do
 
 config :: HakyllConfiguration
 config = defaultHakyllConfiguration { deployCommand = deploy }
-  where deploy = "cp -r _site/* ."
+  where deploy = "cp -r _site/* . && runghc _bin/gh-pages.hs clean"
