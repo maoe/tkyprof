@@ -69,9 +69,9 @@ instance Yesod TKYProf where
     mmsg <- getMessage
     (title, bcs) <- breadcrumbs
     pc <- widgetToPageContent $ do
-      addWidget $(Settings.widgetFile "header")
+      $(Settings.widgetFile "header")
       widget
-      addLucius $(Settings.luciusFile "templates/default-layout.lucius")
+      toWidget $(Settings.luciusFile "templates/default-layout.lucius")
     hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This is done to provide an optimization for serving static files from

@@ -20,7 +20,6 @@ import qualified Text.Hamlet as H
 import qualified Text.Julius as H
 import qualified Text.Lucius as H
 import Language.Haskell.TH.Syntax
-import Yesod.Widget (addWidget, addJulius, addLucius, toWidget)
 import Yesod.Default.Util
 import Data.Default (def)
 import Data.Monoid (mappend)

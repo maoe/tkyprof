@@ -1,7 +1,6 @@
 {-# LANGUAGE TemplateHaskell, QuasiQuotes, OverloadedStrings #-}
 module Handler.Home where
 import TKYProf hiding (reports)
-import Yesod.Static
 import Yesod.Form (Enctype(Multipart))
 import Data.Maybe (listToMaybe)
 import Handler.Reports.Helpers (getAllReports)
@@ -22,4 +21,4 @@ getHomeR = do
     addScript $ StaticR js_jquery_ui_widget_js
     addScript $ StaticR js_jquery_iframe_transport_js
     addScript $ StaticR js_jquery_fileupload_js
-    addWidget $(widgetFile "home")
+    $(widgetFile "home")

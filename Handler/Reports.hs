@@ -13,7 +13,6 @@ import Handler.Reports.Helpers (getAllReports, getProfilingReport, postProfiling
 import ProfilingReport
 import TKYProf hiding (lift)
 import Yesod.Core (lift)
-import Yesod.Request
 import qualified Data.Aeson as A (encode)
 import qualified Data.Attoparsec as A
 import qualified Data.ByteString as S
@@ -30,7 +29,7 @@ getReportsR = do
   reports <- getAllReports
   defaultLayout $ do
     setTitle "TKYProf Reports"
-    addWidget $(widgetFile "reports")
+    $(widgetFile "reports")
 
 postReportsR :: Handler ()
 postReportsR = do
@@ -79,5 +78,4 @@ getReportsIdCommon reportId profilingType = do
     addScript $ StaticR js_tkyprof_js
     addScript $ StaticR js_d3_min_js
     addScript $ StaticR js_d3_layout_min_js
-    addWidget $ toWidget $(juliusFile "templates/reports-id.julius")
-    addWidget $(widgetFile "reports-id")
+    $(widgetFile "reports-id")
