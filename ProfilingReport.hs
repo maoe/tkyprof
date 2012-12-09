@@ -27,9 +27,9 @@ module ProfilingReport
 import Control.Applicative hiding (many)
 import Data.Aeson
 import Data.Attoparsec.Char8 as A8
-import Data.Attoparsec.Enumerator (iterParser)
+import Data.Conduit.Attoparsec (sinkParser)
 import Data.ByteString (ByteString)
-import Data.Enumerator (Iteratee)
+import Data.Conduit
 import Data.Foldable (foldl')
 import Data.Time (UTCTime(..), TimeOfDay(..), timeOfDayToTime, fromGregorian)
 import Data.Tree (Tree(..), Forest)
@@ -83,8 +83,8 @@ data CostCentre = CostCentre
   , inheritedAlloc    :: Double
   } deriving Show
 
-profilingReportI :: Monad m => Iteratee ByteString m ProfilingReport
-profilingReportI = iterParser profilingReport
+profilingReportI :: MonadThrow m => GLSink ByteString m ProfilingReport
+profilingReportI = sinkParser profilingReport
 
 profilingReport :: Parser ProfilingReport
 profilingReport = spaces >>
