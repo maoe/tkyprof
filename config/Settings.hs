@@ -7,9 +7,9 @@
 -- by overriding methods in the Yesod typeclass. That instance is
 -- declared in the tkyprof.hs file.
 module Settings
-  ( hamletFile
-  , juliusFile
-  , luciusFile
+  ( H.hamletFile
+  , H.juliusFile
+  , H.luciusFile
   , widgetFile
   , approot
   , staticroot
@@ -20,9 +20,9 @@ import qualified Text.Hamlet as H
 import qualified Text.Julius as H
 import qualified Text.Lucius as H
 import Language.Haskell.TH.Syntax
-import Yesod.Widget (addWidget, addJulius, addLucius)
-import Data.Monoid (mempty, mappend)
-import System.Directory (doesFileExist)
+import Yesod.Default.Util
+import Data.Default (def)
+import Data.Monoid (mappend)
 import Data.Text (Text)
 
 -- | The base URL for your application. This will usually be different for
@@ -76,35 +76,5 @@ staticroot = approot `mappend` "/static"
 -- used; to get the same auto-loading effect, it is recommended that you
 -- use the devel server.
 
-toHamletFile, toJuliusFile, toLuciusFile :: String -> FilePath
-toHamletFile x = "hamlet/" ++ x ++ ".hamlet"
-toJuliusFile x = "julius/" ++ x ++ ".julius"
-toLuciusFile x = "lucius/" ++ x ++ ".lucius"
-
-hamletFile :: FilePath -> Q Exp
-hamletFile = H.hamletFile . toHamletFile
-
-luciusFile :: FilePath -> Q Exp
-#ifdef PRODUCTION
-luciusFile = H.luciusFile . toLuciusFile
-#else
-luciusFile = H.luciusFileDebug . toLuciusFile
-#endif
-
-juliusFile :: FilePath -> Q Exp
-#ifdef PRODUCTION
-juliusFile = H.juliusFile . toJuliusFile
-#else
-juliusFile = H.juliusFileDebug . toJuliusFile
-#endif
-
 widgetFile :: FilePath -> Q Exp
-widgetFile x = do
-  let h = unlessExists toHamletFile hamletFile
-  let j = unlessExists toJuliusFile juliusFile
-  let l = unlessExists toLuciusFile luciusFile
-  [|addWidget $h >> addJulius $j >> addLucius $l|]
-  where
-    unlessExists tofn f = do
-      e <- qRunIO $ doesFileExist $ tofn x
-      if e then f x else [|mempty|]
+widgetFile = widgetFileNoReload def
