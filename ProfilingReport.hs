@@ -59,6 +59,7 @@ data TotalTime = TotalTime
   { totalSecs  :: Double
   , totalTicks :: Integer
   , resolution :: Integer
+  , processors :: Integer
   } deriving Show
 
 newtype TotalAlloc = TotalAlloc
@@ -128,12 +129,15 @@ totalTime = do
   string "total time  ="; spaces
   secs <- double
   string " secs"; spaces
-  (ticks, res) <- parens $
-    (,) <$> decimal <* string " ticks @ "
-        <*> decimal <* string " ms"
+  (ticks, res, procs) <- parens $
+    (,,) <$> decimal <* string " ticks @ "
+         <*> time
+         <*> ( string ", " *> decimal <* string " processor" <|> pure 1 )
   return TotalTime { totalSecs  = secs
                    , totalTicks = ticks
-                   , resolution = res }
+                   , resolution = res
+                   , processors = procs }
+  where time = (decimal <* string " us") <|> (pure (*1000) <*> decimal <* string " ms")
 
 totalAlloc :: Parser TotalAlloc
 totalAlloc = do
