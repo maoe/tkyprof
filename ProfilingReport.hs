@@ -205,7 +205,7 @@ howMany p = howMany' 0
   where howMany' !n = (p >> howMany' (succ n)) <|> return n
 
 spaces :: Parser ()
-spaces = () <$ many1 space
+spaces = () <$ skipMany space
 
 line :: Parser ByteString
 line = A.takeWhile (not . isEndOfLine) <* spaces
