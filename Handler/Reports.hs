@@ -14,14 +14,9 @@ import ProfilingReport
 import TKYProf hiding (lift)
 import Yesod.Core (lift)
 import qualified Data.Aeson as A (encode)
-import qualified Data.Attoparsec as A
-import qualified Data.ByteString as S
-import qualified Data.ByteString.Lazy as L
 import qualified Data.Text.Lazy.Encoding as T (decodeUtf8)
 import Network.HTTP.Types.Status (seeOther303)
-import Control.Applicative ((<$>))
 import Data.Conduit (($$))
-import Data.Conduit.List (consume)
 import Text.Julius
 
 getReportsR :: Handler RepHtml
@@ -59,15 +54,8 @@ getPostedReports = do
 
 postFileInfo :: FileInfo -> Handler ReportID
 postFileInfo info = do
-  lbs <- lift $ L.fromChunks <$> (fileSource info $$ consume)
-  prof <- parseFileContent lbs
+  prof <- lift $ fileSource info $$ profilingReportI
   postProfilingReport prof
-
-parseFileContent :: L.ByteString -> Handler ProfilingReport
-parseFileContent content =
-  case A.parseOnly profilingReport (S.concat $ L.toChunks content) of
-    Left err   -> invalidArgs ["Invalid format", toMessage err]
-    Right tree -> return tree
 
 getReportsIdCommon :: ReportID -> Text -> Handler RepHtml
 getReportsIdCommon reportId profilingType = do
