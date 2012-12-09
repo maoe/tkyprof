@@ -1,7 +1,7 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings #-}
 module TKYProf
   ( TKYProf (..)
-  , TKYProfRoute (..)
+  , Route (..)
   , resourcesTKYProf
   , Handler
   , Widget
@@ -10,7 +10,7 @@ module TKYProf
   , module StaticFiles
   , module Model
   , module Control.Monad.STM
-  , StaticRoute (..)
+  , StaticRoute
   , lift
   , liftIO
   ) where
@@ -24,8 +24,8 @@ import Settings (hamletFile, luciusFile, juliusFile, widgetFile)
 import StaticFiles
 import System.Directory
 import System.FilePath ((</>))
-import Yesod.Core
-import Yesod.Helpers.Static
+import Yesod.Core hiding (lift)
+import Yesod.Static
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Text as T
 import qualified Settings
@@ -38,14 +38,6 @@ data TKYProf = TKYProf
   { getStatic  :: Static -- ^ Settings for static file serving.
   , getReports :: Reports
   }
-
--- | A useful synonym; most of the handler functions in your application
--- will need to be of this type.
-type Handler = GHandler TKYProf TKYProf
-
--- | A useful synonym; most of the widgets functions in your application
--- will need to be of this type.
-type Widget = GWidget TKYProf TKYProf
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -71,16 +63,16 @@ mkYesodData "TKYProf" $(parseRoutesFile "config/routes")
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod TKYProf where
-  approot _ = Settings.approot
+  approot = ApprootStatic Settings.approot
 
   defaultLayout widget = do
     mmsg <- getMessage
     (title, bcs) <- breadcrumbs
     pc <- widgetToPageContent $ do
-      addWidget $(Settings.widgetFile "header")                     
+      addWidget $(Settings.widgetFile "header")
       widget
-      addLucius $(Settings.luciusFile "default-layout")
-    hamletToRepHtml $(Settings.hamletFile "default-layout")
+      addLucius $(Settings.luciusFile "templates/default-layout.lucius")
+    hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This is done to provide an optimization for serving static files from
   -- a separate domain. Please see the staticroot setting in Settings.hs

@@ -36,7 +36,7 @@ import Data.Tree (Tree(..), Forest)
 import Data.Tree.Zipper (TreePos, Full)
 import Prelude hiding (takeWhile)
 import qualified Data.Attoparsec as A
-import qualified Data.Map as M
+import qualified Data.HashMap.Strict as M
 import qualified Data.Tree.Zipper as Z
 import qualified Data.Vector as V
 import Data.Text (Text)
@@ -205,7 +205,7 @@ howMany p = howMany' 0
   where howMany' !n = (p >> howMany' (succ n)) <|> return n
 
 spaces :: Parser ()
-spaces = () <$ many space
+spaces = () <$ many1 space
 
 line :: Parser ByteString
 line = A.takeWhile (not . isEndOfLine) <* spaces
