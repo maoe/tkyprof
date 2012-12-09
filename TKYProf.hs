@@ -92,6 +92,8 @@ instance Yesod TKYProf where
     exists <- liftIO $ doesFileExist fn'
     unless exists $ liftIO $ L.writeFile fn' content
     return $ Just $ Right (StaticR $ StaticRoute ["tmp", T.pack fn] [], [])
+  
+  maximumContentLength _ _ = 20*1024*1024
 
 instance YesodBreadcrumbs TKYProf where
   breadcrumb HomeR                   = return ("Home", Nothing)
