@@ -1,7 +1,7 @@
 {-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings #-}
 module TKYProf
   ( TKYProf (..)
-  , TKYProfRoute (..)
+  , Route (..)
   , resourcesTKYProf
   , Handler
   , Widget
@@ -10,7 +10,7 @@ module TKYProf
   , module StaticFiles
   , module Model
   , module Control.Monad.STM
-  , StaticRoute (..)
+  , StaticRoute
   , lift
   , liftIO
   ) where
@@ -24,8 +24,8 @@ import Settings (hamletFile, luciusFile, juliusFile, widgetFile)
 import StaticFiles
 import System.Directory
 import System.FilePath ((</>))
-import Yesod.Core
-import Yesod.Helpers.Static
+import Yesod.Core hiding (lift)
+import Yesod.Static
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Text as T
 import qualified Settings
@@ -38,14 +38,6 @@ data TKYProf = TKYProf
   { getStatic  :: Static -- ^ Settings for static file serving.
   , getReports :: Reports
   }
-
--- | A useful synonym; most of the handler functions in your application
--- will need to be of this type.
-type Handler = GHandler TKYProf TKYProf
-
--- | A useful synonym; most of the widgets functions in your application
--- will need to be of this type.
-type Widget = GWidget TKYProf TKYProf
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -71,22 +63,16 @@ mkYesodData "TKYProf" $(parseRoutesFile "config/routes")
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod TKYProf where
-  approot _ = Settings.approot
+  approot = ApprootRelative
 
   defaultLayout widget = do
     mmsg <- getMessage
     (title, bcs) <- breadcrumbs
     pc <- widgetToPageContent $ do
-      addWidget $(Settings.widgetFile "header")                     
+      $(Settings.widgetFile "header")
       widget
-      addLucius $(Settings.luciusFile "default-layout")
-    hamletToRepHtml $(Settings.hamletFile "default-layout")
-
-  -- This is done to provide an optimization for serving static files from
-  -- a separate domain. Please see the staticroot setting in Settings.hs
-  urlRenderOverride a (StaticR s) =
-    Just $ uncurry (joinPath a Settings.staticroot) $ renderRoute s
-  urlRenderOverride _ _ = Nothing
+      toWidget $(Settings.luciusFile "templates/default-layout.lucius")
+    hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
@@ -100,6 +86,8 @@ instance Yesod TKYProf where
     exists <- liftIO $ doesFileExist fn'
     unless exists $ liftIO $ L.writeFile fn' content
     return $ Just $ Right (StaticR $ StaticRoute ["tmp", T.pack fn] [], [])
+  
+  maximumContentLength _ _ = 20*1024*1024
 
 instance YesodBreadcrumbs TKYProf where
   breadcrumb HomeR                   = return ("Home", Nothing)

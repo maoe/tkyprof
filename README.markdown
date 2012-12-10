@@ -26,3 +26,6 @@ Developers
 ------------------------
 
 This tool is written and maintained by Mitsutoshi Aoe, <maoe@foldr.in>.
+And thanks to the following contributors:
+
+* Ben Gamari (@bgamari)

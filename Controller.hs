@@ -10,7 +10,7 @@ import Data.Dynamic (Dynamic, toDyn)
 import Network.Wai (Application)
 import Settings
 import TKYProf
-import Yesod.Helpers.Static
+import Yesod.Static
 -- Import all relevant handler modules here.
 import Handler.Home
 import Handler.Reports
@@ -35,11 +35,10 @@ getRobotsR = return $ RepPlain $ toContent ("User-agent: *" :: ByteString)
 withTKYProf :: (Application -> IO a) -> IO a
 withTKYProf f = do
   rs <- atomically $ emptyReports
+  s <- static Settings.staticdir
   let h = TKYProf { getStatic  = s
                   , getReports = rs }
   toWaiApp h >>= f
-  where
-    s = static Settings.staticdir
 
 withDevelApp :: Dynamic
 withDevelApp = toDyn (withTKYProf :: (Application -> IO ()) -> IO ())
