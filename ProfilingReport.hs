@@ -27,16 +27,16 @@ module ProfilingReport
 import Control.Applicative hiding (many)
 import Data.Aeson
 import Data.Attoparsec.Char8 as A8
-import Data.Attoparsec.Enumerator (iterParser)
+import Data.Conduit.Attoparsec (sinkParser)
 import Data.ByteString (ByteString)
-import Data.Enumerator (Iteratee)
+import Data.Conduit
 import Data.Foldable (foldl')
 import Data.Time (UTCTime(..), TimeOfDay(..), timeOfDayToTime, fromGregorian)
 import Data.Tree (Tree(..), Forest)
 import Data.Tree.Zipper (TreePos, Full)
 import Prelude hiding (takeWhile)
 import qualified Data.Attoparsec as A
-import qualified Data.Map as M
+import qualified Data.HashMap.Strict as M
 import qualified Data.Tree.Zipper as Z
 import qualified Data.Vector as V
 import Data.Text (Text)
@@ -59,6 +59,7 @@ data TotalTime = TotalTime
   { totalSecs  :: Double
   , totalTicks :: Integer
   , resolution :: Integer
+  , processors :: Integer
   } deriving Show
 
 newtype TotalAlloc = TotalAlloc
@@ -83,8 +84,8 @@ data CostCentre = CostCentre
   , inheritedAlloc    :: Double
   } deriving Show
 
-profilingReportI :: Monad m => Iteratee ByteString m ProfilingReport
-profilingReportI = iterParser profilingReport
+profilingReportI :: MonadThrow m => GLSink ByteString m ProfilingReport
+profilingReportI = sinkParser profilingReport
 
 profilingReport :: Parser ProfilingReport
 profilingReport = spaces >>
@@ -128,12 +129,15 @@ totalTime = do
   string "total time  ="; spaces
   secs <- double
   string " secs"; spaces
-  (ticks, res) <- parens $
-    (,) <$> decimal <* string " ticks @ "
-        <*> decimal <* string " ms"
+  (ticks, res, procs) <- parens $
+    (,,) <$> decimal <* string " ticks @ "
+         <*> time
+         <*> ( string ", " *> decimal <* string " processor" <|> pure 1 )
   return TotalTime { totalSecs  = secs
                    , totalTicks = ticks
-                   , resolution = res }
+                   , resolution = res
+                   , processors = procs }
+  where time = (decimal <* string " us") <|> (pure (*1000) <*> decimal <* string " ms")
 
 totalAlloc :: Parser TotalAlloc
 totalAlloc = do
@@ -205,7 +209,7 @@ howMany p = howMany' 0
   where howMany' !n = (p >> howMany' (succ n)) <|> return n
 
 spaces :: Parser ()
-spaces = () <$ many space
+spaces = () <$ skipMany space
 
 line :: Parser ByteString
 line = A.takeWhile (not . isEndOfLine) <* spaces
