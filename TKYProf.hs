@@ -63,7 +63,7 @@ mkYesodData "TKYProf" $(parseRoutesFile "config/routes")
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod TKYProf where
-  approot = ApprootStatic Settings.approot
+  approot = ApprootRelative
 
   defaultLayout widget = do
     mmsg <- getMessage
@@ -73,12 +73,6 @@ instance Yesod TKYProf where
       widget
       toWidget $(Settings.luciusFile "templates/default-layout.lucius")
     hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
-
-  -- This is done to provide an optimization for serving static files from
-  -- a separate domain. Please see the staticroot setting in Settings.hs
-  urlRenderOverride a (StaticR s) =
-    Just $ uncurry (joinPath a Settings.staticroot) $ renderRoute s
-  urlRenderOverride _ _ = Nothing
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
