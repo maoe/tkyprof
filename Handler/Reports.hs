@@ -17,9 +17,10 @@ import qualified Data.Aeson as A (encode)
 import qualified Data.Text.Lazy.Encoding as T (decodeUtf8)
 import Network.HTTP.Types.Status (seeOther303)
 import Data.Conduit (($$))
+import Control.Monad.Trans.Resource (runResourceT)
 import Text.Julius
 
-getReportsR :: Handler RepHtml
+getReportsR :: Handler Html
 getReportsR = do
   reports <- getAllReports
   defaultLayout $ do
@@ -35,13 +36,13 @@ postReportsR = do
     _          -> do mapM_ postFileInfo files
                      sendResponseCreated ReportsR
 
-getReportsIdR :: ReportID -> Handler RepHtml
+getReportsIdR :: ReportID -> Handler Html
 getReportsIdR reportId = redirectWith seeOther303 (ReportsIdTimeR reportId [])
 
-getReportsIdTimeR :: ReportID -> [a] -> Handler RepHtml
+getReportsIdTimeR :: ReportID -> [a] -> Handler Html
 getReportsIdTimeR reportId _ = getReportsIdCommon reportId "time"
 
-getReportsIdAllocR :: ReportID -> [a] -> Handler RepHtml
+getReportsIdAllocR :: ReportID -> [a] -> Handler Html
 getReportsIdAllocR reportId _ = getReportsIdCommon reportId "alloc"
 
 -- Helper functions
@@ -54,10 +55,10 @@ getPostedReports = do
 
 postFileInfo :: FileInfo -> Handler ReportID
 postFileInfo info = do
-  prof <- lift $ fileSource info $$ profilingReportI
+  prof <- runResourceT $ lift $ (fileSource info) $$ profilingReportI
   postProfilingReport prof
 
-getReportsIdCommon :: ReportID -> Text -> Handler RepHtml
+getReportsIdCommon :: ReportID -> Text -> Handler Html
 getReportsIdCommon reportId profilingType = do
   report@ProfilingReport {..} <- getProfilingReport reportId
   let json = rawJS $ T.decodeUtf8 $ A.encode reportCostCentres

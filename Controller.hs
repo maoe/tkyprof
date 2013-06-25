@@ -7,7 +7,6 @@ module Controller
 
 import Data.ByteString (ByteString)
 import Data.Dynamic (Dynamic, toDyn)
-import Network.Wai (Application)
 import Settings
 import TKYProf
 import Yesod.Static

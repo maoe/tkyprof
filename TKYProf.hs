@@ -16,7 +16,6 @@ module TKYProf
   ) where
 
 import Control.Monad (unless)
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.STM (STM, atomically)
 import Control.Monad.Trans.Class (lift)
 import Model
@@ -87,7 +86,7 @@ instance Yesod TKYProf where
     unless exists $ liftIO $ L.writeFile fn' content
     return $ Just $ Right (StaticR $ StaticRoute ["tmp", T.pack fn] [], [])
   
-  maximumContentLength _ _ = 20*1024*1024
+  maximumContentLength _ _ = Just $ 20*1024*1024
 
 instance YesodBreadcrumbs TKYProf where
   breadcrumb HomeR                   = return ("Home", Nothing)
