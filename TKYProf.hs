@@ -12,7 +12,6 @@ module TKYProf
   , module Control.Monad.STM
   , StaticRoute
   , lift
-  , liftIO
   ) where
 
 import Control.Monad (unless)
@@ -71,7 +70,7 @@ instance Yesod TKYProf where
       $(Settings.widgetFile "header")
       widget
       toWidget $(Settings.luciusFile "templates/default-layout.lucius")
-    hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
+    giveUrlRenderer $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
