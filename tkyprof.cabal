@@ -4,7 +4,7 @@ license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
 maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
-copyright:            Copyright (C) 2011 Mitsutoshi Aoe
+copyright:            Copyright (C) 2011-2013 Mitsutoshi Aoe
 synopsis:             A web-based visualizer for GHC Profiling Reports
 description:          A web-based visualizer for GHC Profiling Reports
 category:             Development
