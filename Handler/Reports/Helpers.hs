@@ -14,7 +14,7 @@ import Model (Reports(..), ReportID, allReports, lookupReport, insertReport)
 import ProfilingReport (ProfilingReport)
 import TKYProf (Handler, TKYProf(getReports))
 import Yesod.Core (getYesod)
-import Yesod.Handler (notFound)
+import Yesod.Core.Handler (notFound)
 
 runReports :: STM a -> Handler a
 runReports = liftIO . atomically

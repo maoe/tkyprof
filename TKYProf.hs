@@ -12,11 +12,9 @@ module TKYProf
   , module Control.Monad.STM
   , StaticRoute
   , lift
-  , liftIO
   ) where
 
 import Control.Monad (unless)
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.STM (STM, atomically)
 import Control.Monad.Trans.Class (lift)
 import Model
@@ -72,7 +70,7 @@ instance Yesod TKYProf where
       $(Settings.widgetFile "header")
       widget
       toWidget $(Settings.luciusFile "templates/default-layout.lucius")
-    hamletToRepHtml $(Settings.hamletFile "templates/default-layout.hamlet")
+    giveUrlRenderer $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows
@@ -86,8 +84,8 @@ instance Yesod TKYProf where
     exists <- liftIO $ doesFileExist fn'
     unless exists $ liftIO $ L.writeFile fn' content
     return $ Just $ Right (StaticR $ StaticRoute ["tmp", T.pack fn] [], [])
-  
-  maximumContentLength _ _ = 20*1024*1024
+
+  maximumContentLength _ _ = Just $ 20*1024*1024
 
 instance YesodBreadcrumbs TKYProf where
   breadcrumb HomeR                   = return ("Home", Nothing)

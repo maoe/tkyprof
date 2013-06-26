@@ -84,7 +84,7 @@ data CostCentre = CostCentre
   , inheritedAlloc    :: Double
   } deriving Show
 
-profilingReportI :: MonadThrow m => GLSink ByteString m ProfilingReport
+profilingReportI :: MonadThrow m => Sink ByteString m ProfilingReport
 profilingReportI = sinkParser profilingReport
 
 profilingReport :: Parser ProfilingReport
