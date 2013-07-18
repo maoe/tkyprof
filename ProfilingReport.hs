@@ -7,7 +7,7 @@ module ProfilingReport
     -- * Parsers for sub-parts of the report
   , timestamp
   , title
-  , commandLine 
+  , commandLine
   , totalTime
   , totalAlloc
   , hotCostCentres
@@ -30,7 +30,7 @@ import Data.Attoparsec.Char8 as A8
 import Data.Conduit.Attoparsec (sinkParser)
 import Data.ByteString (ByteString)
 import Data.Conduit
-import Data.Foldable (foldl')
+import Data.Foldable (asum, foldl')
 import Data.Time (UTCTime(..), TimeOfDay(..), timeOfDayToTime, fromGregorian)
 import Data.Tree (Tree(..), Forest)
 import Data.Tree.Zipper (TreePos, Full)
@@ -129,15 +129,19 @@ totalTime = do
   string "total time  ="; spaces
   secs <- double
   string " secs"; spaces
-  (ticks, res, procs) <- parens $
-    (,,) <$> decimal <* string " ticks @ "
-         <*> time
-         <*> ( string ", " *> decimal <* string " processor" <|> pure 1 )
+  (ticks, res, procs) <- parens $ (,,)
+    <$> decimal <* string " ticks @ "
+    <*> time <* string ", "
+    <*> decimal <* many1 (notChar ')')
   return TotalTime { totalSecs  = secs
                    , totalTicks = ticks
                    , resolution = res
                    , processors = procs }
-  where time = (decimal <* string " us") <|> (pure (*1000) <*> decimal <* string " ms")
+  where
+    time = asum
+      [ decimal <* string " us"
+      , pure (*1000) <*> decimal <* string " ms"
+      ]
 
 totalAlloc :: Parser TotalAlloc
 totalAlloc = do
