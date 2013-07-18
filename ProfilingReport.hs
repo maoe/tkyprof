@@ -30,7 +30,7 @@ import Data.Attoparsec.Char8 as A8
 import Data.Conduit.Attoparsec (sinkParser)
 import Data.ByteString (ByteString)
 import Data.Conduit
-import Data.Foldable (foldl')
+import Data.Foldable (asum, foldl')
 import Data.Time (UTCTime(..), TimeOfDay(..), timeOfDayToTime, fromGregorian)
 import Data.Tree (Tree(..), Forest)
 import Data.Tree.Zipper (TreePos, Full)
@@ -137,7 +137,11 @@ totalTime = do
                    , totalTicks = ticks
                    , resolution = res
                    , processors = procs }
-  where time = (decimal <* string " us") <|> (pure (*1000) <*> decimal <* string " ms")
+  where
+    time = asum
+      [ decimal <* string " us"
+      , pure (*1000) <*> decimal <* string " ms"
+      ]
 
 totalAlloc :: Parser TotalAlloc
 totalAlloc = do
