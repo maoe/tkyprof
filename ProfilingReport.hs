@@ -129,10 +129,10 @@ totalTime = do
   string "total time  ="; spaces
   secs <- double
   string " secs"; spaces
-  (ticks, res, procs) <- parens $
-    (,,) <$> decimal <* string " ticks @ "
-         <*> time
-         <*> ( string ", " *> decimal <* string " processor" <|> pure 1 )
+  (ticks, res, procs) <- parens $ (,,)
+    <$> decimal <* string " ticks @ "
+    <*> time <* string ", "
+    <*> decimal <* many1 (notChar ')')
   return TotalTime { totalSecs  = secs
                    , totalTicks = ticks
                    , resolution = res
