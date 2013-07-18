@@ -7,7 +7,7 @@ module ProfilingReport
     -- * Parsers for sub-parts of the report
   , timestamp
   , title
-  , commandLine 
+  , commandLine
   , totalTime
   , totalAlloc
   , hotCostCentres
