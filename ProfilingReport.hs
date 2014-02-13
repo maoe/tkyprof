@@ -74,8 +74,8 @@ data BriefCostCentre = BriefCostCentre
   } deriving Show
 
 data CostCentre = CostCentre
-  { costCentreName    :: ByteString
-  , costCentreModule  :: ByteString
+  { costCentreName    :: Text
+  , costCentreModule  :: Text
   , costCentreNo      :: Integer
   , costCentreEntries :: Integer
   , individualTime    :: Double
@@ -181,14 +181,15 @@ nestLevel :: Parser Int
 nestLevel = howMany space
 
 costCentre :: Parser CostCentre
-costCentre = CostCentre <$> takeWhile (not . isSpace) <* spaces
-                        <*> takeWhile (not . isSpace) <* spaces
-                        <*> decimal                   <* spaces
-                        <*> decimal                   <* spaces
-                        <*> double                    <* spaces
-                        <*> double                    <* spaces
-                        <*> double                    <* spaces
-                        <*> double
+costCentre =
+    CostCentre <$> (T.decodeUtf8 <$> takeWhile (not . isSpace)) <* spaces
+               <*> (T.decodeUtf8 <$> takeWhile (not . isSpace)) <* spaces
+               <*> decimal                                      <* spaces
+               <*> decimal                                      <* spaces
+               <*> double                                       <* spaces
+               <*> double                                       <* spaces
+               <*> double                                       <* spaces
+               <*> double
 
 type Zipper = TreePos Full
 type Level = Int
