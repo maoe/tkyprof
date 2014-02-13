@@ -1,5 +1,6 @@
 TKYProf
 ========================
+[![Build Status](https://travis-ci.org/maoe/tkyprof.png)](https://travis-ci.org/maoe/tkyprof)
 
 TKYProf is a web-based interactive visualizer for [GHC Time and Allocation Profiling Reports](http://www.haskell.org/ghc/dist/stable/docs/html/users_guide/prof-time-options.html). It helps you to find the performance bottlenecks of your code quickly.
 
