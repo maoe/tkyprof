@@ -33,11 +33,11 @@
   <div #report-summary .box>
     <dl>
       <dt>Timestamp
-      <dd>#{show reportTimestamp}
+      <dd>#{show profileTimestamp}
       <dt>Command line
-      <dd>#{reportCommandLine}
+      <dd>#{profileCommandLine}
       <dt>Total time
-      <dd>#{totalSecs reportTotalTime} seconds
-      <dd>#{totalTicks reportTotalTime} ticks @ #{resolution reportTotalTime} ms
+      <dd>#{show (totalTimeElapsed profileTotalTime)} seconds
+      <dd>#{totalTimeTicks profileTotalTime} ticks @ #{show (totalTimeResolution profileTotalTime)} ms
       <dt>Total allocations
-      <dd>#{totalAllocBytes reportTotalAlloc} bytes
+      <dd>#{totalAllocBytes profileTotalAlloc} bytes

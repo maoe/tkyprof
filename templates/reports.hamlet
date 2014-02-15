@@ -3,6 +3,6 @@ $maybe _ <- listToMaybe reports
   <ul>
     $forall report <- reports
       <li>
-        <a href=@{ReportsIdR (fst report)}>#{reportCommandLine (snd report)}
+        <a href=@{ReportsIdR (fst report)}>#{profileCommandLine (snd report)}
 $nothing
   <p>There are currently no reports available. First of all, upload your profiling reports please.

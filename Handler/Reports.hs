@@ -16,9 +16,12 @@ import Yesod.Core (lift)
 import qualified Data.Aeson as A (encode)
 import qualified Data.Text.Lazy.Encoding as T (decodeUtf8)
 import Network.HTTP.Types.Status (seeOther303)
-import Data.Conduit (($$))
+import Data.Conduit (($=), ($$))
+import qualified Data.Conduit.Text as CT
 import Control.Monad.Trans.Resource (runResourceT)
 import Text.Julius
+
+import GHC.RTS.TimeAllocProfile
 
 getReportsR :: Handler Html
 getReportsR = do
@@ -55,13 +58,13 @@ getPostedReports = do
 
 postFileInfo :: FileInfo -> Handler ReportID
 postFileInfo info = do
-  prof <- runResourceT $ lift $ (fileSource info) $$ profilingReportI
+  prof <- runResourceT $ lift $ fileSource info $= CT.decode CT.utf8 $$ profilingReportI
   postProfilingReport prof
 
 getReportsIdCommon :: ReportID -> Text -> Handler Html
 getReportsIdCommon reportId profilingType = do
-  report@ProfilingReport {..} <- getProfilingReport reportId
-  let json = rawJS $ T.decodeUtf8 $ A.encode reportCostCentres
+  report@TimeAllocProfile {..} <- getProfilingReport reportId
+  let json = rawJS $ T.decodeUtf8 $ A.encode $ profileCostCentres report
   defaultLayout $ do
     setTitle $ "TKYProf Reports"
     addScript $ StaticR js_tkyprof_js
