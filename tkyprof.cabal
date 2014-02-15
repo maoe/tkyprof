@@ -118,4 +118,10 @@ executable prof2json
 
 source-repository head
   type:               git
-  location:           git@github.com:maoe/tkyprof.git
+  branch:             develop
+  location:           https://github.com/maoe/tkyprof.git
+
+source-repository this
+  type:               git
+  tag:                v0.2.2
+  location:           https://github.com/maoe/tkyprof.git
