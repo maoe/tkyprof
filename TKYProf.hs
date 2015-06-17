@@ -1,4 +1,4 @@
-{-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes, TemplateHaskell, TypeFamilies, OverloadedStrings, ViewPatterns #-}
 module TKYProf
   ( TKYProf (..)
   , Route (..)
@@ -70,7 +70,7 @@ instance Yesod TKYProf where
       $(Settings.widgetFile "header")
       widget
       toWidget $(Settings.luciusFile "templates/default-layout.lucius")
-    giveUrlRenderer $(Settings.hamletFile "templates/default-layout.hamlet")
+    withUrlRenderer $(Settings.hamletFile "templates/default-layout.hamlet")
 
   -- This function creates static content files in the static folder
   -- and names them based on a hash of their content. This allows

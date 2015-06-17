@@ -25,6 +25,7 @@ module ProfilingReport
   ) where
 
 import Control.Applicative hiding (many)
+import Control.Monad.Catch (MonadThrow(..))
 import Data.Aeson
 import Data.Attoparsec.Char8 as A8
 import Data.Conduit.Attoparsec (sinkParser)

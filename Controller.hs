@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, OverloadedStrings #-}
+{-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, OverloadedStrings, ViewPatterns #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 module Controller
   ( withTKYProf
