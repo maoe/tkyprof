@@ -1,5 +1,5 @@
 name:                 tkyprof
-version:              0.2.2.1
+version:              0.2.2.2
 license:              BSD3
 license-file:         LICENSE
 author:               Mitsutoshi Aoe
@@ -122,5 +122,5 @@ source-repository head
 
 source-repository this
   type:               git
-  branch:             v0.2.2.1
+  tag:                v0.2.2.2
   location:           https://github.com/maoe/tkyprof.git
