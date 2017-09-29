@@ -7,7 +7,7 @@ maintainer:           Mitsutoshi Aoe <maoe@foldr.in>
 copyright:            Copyright (C) 2011-2014 Mitsutoshi Aoe
 synopsis:             A web-based visualizer for GHC Profiling Reports
 description:          A web-based visualizer for GHC Profiling Reports
-category:             Development
+category:             Development, Profiling
 stability:            Experimental
 cabal-version:        >= 1.6
 build-type:           Simple
